@@ -31,7 +31,7 @@ public class WhiteBoardController {
         HandBill handBill = new HandBill();
         handBill.setTitle(title);
         handBill.setDescription(description);
-        whiteBoardService.addHandBillToWhiteBoard(handBill,file);
+        whiteBoardService.addHandBill(handBill,file);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

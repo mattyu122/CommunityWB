@@ -25,7 +25,7 @@ public class WhiteBoardService {
     }
 
 
-    public void addHandBillToWhiteBoard(HandBill handbill, MultipartFile file){
+    public void addHandBill(HandBill handbill, MultipartFile file){
         try {
             String url = s3Service.uploadFile("handbillbucket", file);
             handbill.setS3_key(url);
