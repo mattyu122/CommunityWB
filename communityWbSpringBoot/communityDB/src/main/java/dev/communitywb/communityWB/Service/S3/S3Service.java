@@ -33,10 +33,18 @@ public class S3Service {
             // Upload the file
             s3client.putObject(putObjectRequest);
 
-            // Return the file's URL (assuming the bucket is public)
-            return String.format("https://%s.s3.amazonaws.com/%s", bucketName, key);
+            // Return the file's key
+            return key;
         } catch (AmazonServiceException e) {
             throw new IOException("Error uploading file to S3: " + e.getMessage(), e);
+        }
+    }
+
+    public String getFile(String bucketName, String key) throws IOException {
+        try {
+            return s3client.generatePresignedUrl(bucketName, key, null).toString();
+        } catch (AmazonServiceException e) {
+            throw new IOException("Error getting file from S3: " + e.getMessage(), e);
         }
     }
 }

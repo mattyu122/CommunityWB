@@ -12,17 +12,30 @@ public class HandBill {
     private String s3_key;
     private String title;
     private String description;
-    private String imageId;
+    private String imageUrl;
 
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setImageId(String imageId) {
-        this.imageId = imageId;
+    public String getDescription(){
+        return description;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrl(){
+        return imageUrl;
     }
 
     public ObjectId get_id() {
@@ -43,7 +56,7 @@ public class HandBill {
                 "_id=" + _id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", imageId='" + imageId + '\'' +
+                ", imageId='" + imageUrl + '\'' +
                 '}';
     }
 }

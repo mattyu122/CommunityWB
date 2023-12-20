@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
-public class SpringBootConfig{
+public class AmazonS3Config{
 
     private AWSCredentials credentials = new BasicAWSCredentials("AKIAUH4S5SDKHBYZZLMS", "vRs3JCFERJZ9l3m+LqERK7/mnIl3XZj2ogguzBlh");
     @Bean

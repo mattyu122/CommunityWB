@@ -1,10 +1,11 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import './App.css';
 import HandBill from './DataModel/Handbill';
 import Whiteboard from './component/Whiteboard';
 
 function App() {
   const [handBill, setHandBill] = useState<HandBill|null>(null);
+  const [displayHandBill, setDisplayHandBill] = useState<HandBill[]>([]);
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     if(!file) {
@@ -33,6 +34,27 @@ function App() {
     .then(data => console.log(data))
     .catch(error => console.log(error));
   }
+
+  const getAllHandBills = () => {
+    fetch('http://localhost:3000/whiteboard',{
+      method: 'GET'
+    })
+    .then(response => 
+      {
+        if (response.ok) {
+          console.log(response);
+          return response.json()
+        }
+        throw new Error('Network response was not ok.');
+      })
+    .then(data => {
+      console.log(data);
+    })
+  }
+
+  useEffect(() => {
+    getAllHandBills();
+  },[])
   return (
     <div className="App">
       <nav className="navbar">
