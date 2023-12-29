@@ -31,6 +31,8 @@ public class WhiteBoardController {
     public ResponseEntity<?> addHandBill(@RequestParam("file") MultipartFile file, @RequestParam("title") String title, @RequestParam("description") String description) {
         HandBill handBill = new HandBill();
         handBill.setTitle(title);
+        handBill.setWidth(500);
+        handBill.setHeight(300);
         handBill.setDescription(description);
         whiteBoardService.addHandBill(handBill,file);
         return new ResponseEntity<>(HttpStatus.OK);

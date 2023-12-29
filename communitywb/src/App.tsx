@@ -1,11 +1,11 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import './App.css';
 import HandBill from './DataModel/Handbill';
-import Whiteboard from './component/Whiteboard';
+import WhiteBoard from './DataModel/WhiteBoard';
+import WhiteboardComponent from './component/Whiteboard';
 
 function App() {
   const [handBill, setHandBill] = useState<HandBill|null>(null);
-  const [displayHandBill, setDisplayHandBill] = useState<HandBill[]>([]);
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     if(!file) {
@@ -13,6 +13,9 @@ function App() {
     }
     setHandBill(new HandBill(file));
   }
+
+  //fetch a specific whiteboard
+  const whiteboard = new WhiteBoard("Bayview");
   const uploadFiles = () => {
     if (!handBill) {
       return;
@@ -34,36 +37,15 @@ function App() {
     .then(data => console.log(data))
     .catch(error => console.log(error));
   }
-
-  const getAllHandBills = () => {
-    fetch('http://localhost:3000/whiteboard',{
-      method: 'GET'
-    })
-    .then(response => 
-      {
-        if (response.ok) {
-          console.log(response);
-          return response.json()
-        }
-        throw new Error('Network response was not ok.');
-      })
-    .then(data => {
-      console.log(data);
-    })
-  }
-
-  useEffect(() => {
-    getAllHandBills();
-  },[])
   return (
     <div className="App">
       <nav className="navbar">
-        <h1>Community White Board</h1>
+        <h1>Community White Board @ {whiteboard.location}</h1>
         <input type="file" onChange={handleFileChange}/>
         <button onClick={uploadFiles}>Upload</button>
       </nav>
       <main className="main">
-        <Whiteboard/>
+        <WhiteboardComponent whiteBoard={whiteboard}/>
       </main>
     </div>
   );

@@ -5,6 +5,10 @@ class HandBill {
     description: string;
     imageUrl: string;
     file: File;
+    width: number;
+    height: number;
+    positionX: number;
+    positionY: number;
 
     constructor(file: File) {
         this.id = "";
@@ -13,6 +17,10 @@ class HandBill {
         this.description = "Test description";
         this.imageUrl = "";
         this.file = file;
+        this.width = 250;
+        this.height = 150;
+        this.positionX = 0;
+        this.positionY = 0;
     }
     toFormData(): FormData {
         const formData = new FormData();
