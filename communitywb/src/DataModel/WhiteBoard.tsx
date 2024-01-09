@@ -9,7 +9,7 @@ class WhiteBoard{
     constructor(location: String){
         this.location = location;
         this.maxWidth = window.innerWidth;
-        this.maxHeight = window.innerHeight*0.85;
+        this.maxHeight = window.innerHeight*1.5;
         this.boardList = [new Board(this.maxWidth, this.maxHeight)];
     }
 
