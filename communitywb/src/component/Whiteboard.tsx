@@ -9,7 +9,6 @@ interface whiteboardProps{
 }
 
 const WhiteboardComponent = ({whiteBoard}:whiteboardProps) => {
-    // const [HandBillsFromDB, setDisplayHandBill] = useState<HandBill[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [boardList, setBoardList] = useState<Board[]>([]);
 
@@ -32,12 +31,10 @@ const WhiteboardComponent = ({whiteBoard}:whiteboardProps) => {
             throw new Error('Network response was not ok.');
         })
         .then(data => {
-            // setDisplayHandBill(data)
             whiteBoard.addHandBillToBoards(data);
         })
         .then(() => {
             setBoardList(whiteBoard.boardList);
-            // setDisplayHandBill(whiteBoard.boardList[0].handbills);
             console.log(boardList);
         })
     }

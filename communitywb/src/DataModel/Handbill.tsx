@@ -10,15 +10,15 @@ class HandBill {
     positionX: number;
     positionY: number;
 
-    constructor(file: File) {
+    constructor(file: File, height:number, width:number) {
         this.id = "";
         this.s3_key = "";
         this.title = "Test";
         this.description = "Test description";
         this.imageUrl = "";
         this.file = file;
-        this.width = 250;
-        this.height = 150;
+        this.width = width;
+        this.height = height;
         this.positionX = 0;
         this.positionY = 0;
     }
@@ -29,6 +29,8 @@ class HandBill {
         formData.append('description', this.description);
         formData.append('imageId', this.imageUrl);
         formData.append('s3_photoId', this.s3_key);
+        formData.append('width', this.width.toString());
+        formData.append('height', this.height.toString());
         return formData;
     }
 

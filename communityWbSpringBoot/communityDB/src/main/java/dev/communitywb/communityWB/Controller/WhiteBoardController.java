@@ -28,11 +28,16 @@ public class WhiteBoardController {
     }
 
     @PostMapping("/addHandBill")
-    public ResponseEntity<?> addHandBill(@RequestParam("file") MultipartFile file, @RequestParam("title") String title, @RequestParam("description") String description) {
+    public ResponseEntity<?> addHandBill(
+        @RequestParam("file") MultipartFile file, 
+        @RequestParam("title") String title, 
+        @RequestParam("description") String description,
+        @RequestParam("width") String width,
+        @RequestParam("height") String height) {
         HandBill handBill = new HandBill();
         handBill.setTitle(title);
-        handBill.setWidth(500);
-        handBill.setHeight(300);
+        handBill.setWidth(Integer.parseInt(width));
+        handBill.setHeight(Integer.parseInt(height));
         handBill.setDescription(description);
         whiteBoardService.addHandBill(handBill,file);
         return new ResponseEntity<>(HttpStatus.OK);

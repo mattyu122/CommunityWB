@@ -6,12 +6,14 @@ import WhiteboardComponent from './component/Whiteboard';
 
 function App() {
   const [handBill, setHandBill] = useState<HandBill|null>(null);
+  const [height, setHeight] = useState<number>(300);
+  const [width, setWidth] = useState<number>(150);
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     if(!file) {
       return;
     }
-    setHandBill(new HandBill(file));
+    setHandBill(new HandBill(file,height,width));
   }
 
   //fetch a specific whiteboard
@@ -20,7 +22,9 @@ function App() {
     if (!handBill) {
       return;
     }
-
+    console.log(handBill)
+    handBill.height = height;
+    handBill.width = width;
     const formData = handBill.toFormData();
     fetch('http://localhost:3000/whiteboard/addHandBill', {
       method: 'POST',
@@ -37,11 +41,26 @@ function App() {
     .then(data => console.log(data))
     .catch(error => console.log(error));
   }
+
+  const handleHeightChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setHeight(parseInt(event.target.value));
+  }
+  const handleWidthChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setWidth(parseInt(event.target.value));
+  }
   return (
     <div className="App">
       <nav className="navbar">
         <h1>Community White Board @ {whiteboard.location}</h1>
         <input type="file" onChange={handleFileChange}/>
+        <div>
+          <label htmlFor="title">Height</label>
+          <textarea id="height" placeholder="Enter height here..." onChange={handleHeightChange}></textarea>
+        </div>
+        <div>
+          <label htmlFor="title">Width</label>
+          <textarea id="width" placeholder="Enter width here..." onChange={handleWidthChange}></textarea>
+        </div>
         <button onClick={uploadFiles}>Upload</button>
       </nav>
       <main className="main">
