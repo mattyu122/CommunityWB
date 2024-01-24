@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from 'react';
 import './App.css';
-import HandBill from './DataModel/Handbill';
+import HandBill from './DataModel/HandBill/Handbill';
 import WhiteBoard from './DataModel/WhiteBoard';
 import WhiteboardComponent from './component/Whiteboard';
 

@@ -2,8 +2,12 @@ package dev.communitywb.communityWB.Service.WhiteBoard;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +30,25 @@ public class WhiteBoardService {
         return new WhiteBoard();
     }
 
+    public Page<HandBill> getAllHandBillsByPage(Pageable pageable){
+        Page<HandBill> handBillPage = handBillRepository.findAll(pageable);
+        List<HandBill> handBillPages = handBillPage.getContent()
+            .stream()
+            .map(handBill -> setImageUrl(handBill))
+            .collect(Collectors.toList());
+        
+        return new PageImpl<>(handBillPages, pageable, handBillPage.getTotalElements());
+    }
+
+    private HandBill setImageUrl(HandBill handBill){
+        try {
+            String imageUrl = s3Service.getFile(S3BucketName.HANDBILL_BUCKET.toString(), handBill.getS3_key());
+            handBill.setImageUrl(imageUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return handBill;
+    }
 
     public List<HandBill> getAllHandBills(){
         List<HandBill> handBills = handBillRepository.findAll();

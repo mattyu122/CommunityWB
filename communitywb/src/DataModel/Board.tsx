@@ -1,10 +1,11 @@
-import HandBill from "./Handbill"
+import HandBill from "./HandBill/Handbill"
 import Node from "./Node"
 class Board {
     maxWidth: number
     maxHeight: number
     handbills: HandBill[]
     rootNode: Node | null
+    gapBtwHandBills: number = 5
     constructor(width: number, height: number) {
         this.maxWidth = width
         this.maxHeight = height
@@ -15,13 +16,11 @@ class Board {
 
     addHandBill(handBill: HandBill): boolean {
         const node = this.FindNode(handBill, this.rootNode)
-        console.log(node)
         if (node != null){
             this.splitNode(node, handBill.width, handBill.height)
             handBill.positionX = node.positionX
             handBill.positionY = node.positionY
             this.handbills.push(handBill)
-            console.log(handBill)
             return true
         }
 
@@ -43,13 +42,7 @@ class Board {
 
     //Try to maintain a squarish board
     private nodeToBeUsed(curNode: Node,rightNode: Node | null, downNode: Node | null, billWidth: number, billHeight: number): Node | null {
-        if (rightNode && downNode){
-            if (curNode.positionY + curNode.height + billHeight > curNode.positionX + curNode.width + billWidth){
-                return rightNode
-            }else{
-                return downNode
-            }
-        }else if (rightNode){
+        if (rightNode){
             return rightNode
         }
         else if (downNode){
@@ -67,13 +60,13 @@ class Board {
     //     return (billHeight <= node.height)
     // }
 
-    private splitNode(node: Node, billWidth: number, billHeight: number): Node{
+    private splitNode(node: Node, billWidth: number, billHeight: number): void{
         node.used = true
-        node.down = new Node(node.width, node.height - billHeight, node.positionX, node.positionY + billHeight)
-        node.right = new Node(node.width - billWidth, billHeight, node.positionX + billWidth, node.positionY)
-        node.width = billWidth
-        node.height = billHeight
-        return node
+        node.down = new Node(node.width, node.height - billHeight - this.gapBtwHandBills, node.positionX, node.positionY + billHeight + this.gapBtwHandBills)
+        node.right = new Node(node.width - billWidth - this.gapBtwHandBills, billHeight, node.positionX + billWidth + this.gapBtwHandBills, node.positionY)
+        node.width = billWidth + this.gapBtwHandBills
+        node.height = billHeight + this.gapBtwHandBills
+        return ;
     }
 }
 

@@ -1,4 +1,4 @@
-import HandBill from "../DataModel/Handbill";
+import HandBill from "../DataModel/HandBill/Handbill";
 
 interface HandBillProps{
     handBill: HandBill;
