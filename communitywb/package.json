@@ -11,7 +11,7 @@
     "@types/node": "^20.9.2",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
-    "axios": "^1.6.5",
+    "axios": "^1.7.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.52.2",
@@ -33,6 +33,9 @@
       "react-app/jest"
     ]
   },
+  "resolutions": {
+      "ws": "8.17.1"
+    },
   "browserslist": {
     "production": [
       ">0.2%",
