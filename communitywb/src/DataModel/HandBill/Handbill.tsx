@@ -7,6 +7,7 @@ class HandBill {
     file: File;
     width: number;
     height: number;
+    sizeIndex: number;
     positionX: number;
     positionY: number;
 
@@ -21,6 +22,7 @@ class HandBill {
         this.height = height;
         this.positionX = 0;
         this.positionY = 0;
+        this.sizeIndex = height * width;
     }
     toFormData(): FormData {
         const formData = new FormData();
@@ -31,6 +33,7 @@ class HandBill {
         formData.append('s3_photoId', this.s3_key);
         formData.append('width', this.width.toString());
         formData.append('height', this.height.toString());
+        formData.append('sizeIndex', this.sizeIndex.toString());
         return formData;
     }
 

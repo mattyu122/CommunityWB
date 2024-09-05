@@ -40,7 +40,6 @@ class Board {
         return null
     }
 
-    //Try to maintain a squarish board
     private nodeToBeUsed(curNode: Node,rightNode: Node | null, downNode: Node | null, billWidth: number, billHeight: number): Node | null {
         if (rightNode){
             return rightNode
@@ -51,14 +50,6 @@ class Board {
 
         return null
     }
-
-    // private canGrowDown(billWidth: number, billHeight: number, node: Node): boolean {
-    //     return (billWidth <= node.width)
-    // }
-
-    // private canGrowRight(billWidth: number, billHeight: number, node: Node): boolean {
-    //     return (billHeight <= node.height)
-    // }
 
     private splitNode(node: Node, billWidth: number, billHeight: number): void{
         node.used = true

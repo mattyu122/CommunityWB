@@ -7,37 +7,48 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.communitywb.communityWB.DTO.PageResult;
 import dev.communitywb.communityWB.DataModel.HandBill;
 import dev.communitywb.communityWB.DataModel.WhiteBoard;
-import dev.communitywb.communityWB.DataModel.Enum.S3BucketName;
+import dev.communitywb.communityWB.Enum.S3BucketName;
 import dev.communitywb.communityWB.Repository.HandBillRepository;
 import dev.communitywb.communityWB.Service.S3.S3Service;
 
 @Service
 public class WhiteBoardService {
-    @Autowired
-    private S3Service s3Service;
+
 
     @Autowired
     private HandBillRepository handBillRepository;
+
+    @Autowired
+    private S3Service s3Service;
+
+
 
 
     public WhiteBoard getWhiteBoard() {
         return new WhiteBoard();
     }
 
-    public Page<HandBill> getAllHandBillsByPage(Pageable pageable){
-        Page<HandBill> handBillPage = handBillRepository.findAll(pageable);
-        List<HandBill> handBillPages = handBillPage.getContent()
-            .stream()
-            .map(handBill -> setImageUrl(handBill))
+    public PageResult<HandBill> getAllHandBillsByPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<HandBill> handBillPages = handBillRepository.findAll(pageable);
+
+        List<HandBill> handBills = handBillPages.getContent().stream()
+            .map(this::setImageUrl)
             .collect(Collectors.toList());
+
         
-        return new PageImpl<>(handBillPages, pageable, handBillPage.getTotalElements());
+        PageImpl<HandBill> handBillPage = new PageImpl<>(handBills, pageable, handBillPages.getTotalElements());
+        int currentPage = handBillPage.getNumber();
+        PageResult<HandBill> pageResult = new PageResult<>(handBillPage, currentPage);
+        return pageResult;
     }
 
     private HandBill setImageUrl(HandBill handBill){
@@ -50,20 +61,20 @@ public class WhiteBoardService {
         return handBill;
     }
 
-    public List<HandBill> getAllHandBills(){
-        List<HandBill> handBills = handBillRepository.findAll();
+    // public List<HandBill> getAllHandBills(){
+    //     List<HandBill> handBills = handBillRepository.findAll();
         
-        try{
-            for (HandBill handBill : handBills) {
-                System.err.println(handBill);
-                String imageUrl = s3Service.getFile(S3BucketName.HANDBILL_BUCKET.toString(), handBill.getS3_key());
-                handBill.setImageUrl(imageUrl);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return handBills;
-    }
+    //     try{
+    //         for (HandBill handBill : handBills) {
+    //             System.err.println(handBill);
+    //             String imageUrl = s3Service.getFile(S3BucketName.HANDBILL_BUCKET.toString(), handBill.getS3Key());
+    //             handBill.setImageUrl(imageUrl);
+    //         }
+    //     }catch(Exception e){
+    //         e.printStackTrace();
+    //     }
+    //     return handBills;
+    // }
 
     public void addHandBill(HandBill handbill, MultipartFile file){
         try {

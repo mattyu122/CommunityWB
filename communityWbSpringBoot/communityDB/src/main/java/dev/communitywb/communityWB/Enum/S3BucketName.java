@@ -1,4 +1,4 @@
-package dev.communitywb.communityWB.DataModel.Enum;
+package dev.communitywb.communityWB.Enum;
 
 public enum S3BucketName {
     HANDBILL_BUCKET("handbillbucket");

@@ -2,12 +2,13 @@ import { ChangeEvent, useState } from 'react';
 import './App.css';
 import HandBill from './DataModel/HandBill/Handbill';
 import WhiteBoard from './DataModel/WhiteBoard';
+import UploadBillModal from './component/UploadBillModal';
 import WhiteboardComponent from './component/Whiteboard';
-
 function App() {
   const [handBill, setHandBill] = useState<HandBill|null>(null);
   const [height, setHeight] = useState<number>(300);
   const [width, setWidth] = useState<number>(150);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     if(!file) {
@@ -61,7 +62,12 @@ function App() {
           <label htmlFor="title">Width</label>
           <textarea id="width" placeholder="Enter width here..." onChange={handleWidthChange}></textarea>
         </div>
-        <button onClick={uploadFiles}>Upload</button>
+        <button onClick={()=>setIsModalOpen(true)}>Upload</button>
+        <UploadBillModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen((prev) => !prev)} 
+        onSubmit={uploadFiles} 
+        />
       </nav>
       <main className="main">
         <WhiteboardComponent whiteBoard={whiteboard}/>

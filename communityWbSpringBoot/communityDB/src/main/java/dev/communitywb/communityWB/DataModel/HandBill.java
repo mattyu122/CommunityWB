@@ -13,20 +13,20 @@ public class HandBill {
     private String title;
     private String description;
     private String imageUrl;
-    private Integer width;
-    private Integer height;
+    private Double width;
+    private Double height;
     
-    public void setWidth(Integer width) {
+    public void setWidth(Double width) {
         this.width = width;
     }
-    public Integer getWidth() {
+    public Double getWidth() {
         return width;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(Double height) {
         this.height = height;
     }
-    public Integer getHeight() {
+    public Double getHeight() {
         return height;
     }
     public void setTitle(String title) {

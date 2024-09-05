@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-CommunityWbApplication<communityDB>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "dev.communitywb.communityWB.CommunityWbApplication",
+            "projectName": "communityDB",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
