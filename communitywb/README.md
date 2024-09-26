@@ -74,3 +74,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 Zustand for state management across components
 React Hook Form for input form handling
 TanStack for Query
+Ant Desing for UI library

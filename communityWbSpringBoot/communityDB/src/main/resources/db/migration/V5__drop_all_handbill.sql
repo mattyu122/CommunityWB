@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS handbill;
+DROP TABLE IF EXISTS hand_bill

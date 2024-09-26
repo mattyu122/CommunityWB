@@ -1,0 +1,10 @@
+CREATE TABLE handbill (
+    id SERIAL PRIMARY KEY,
+    caption TEXT,
+    s3_key VARCHAR(50) NOT NULL,
+    imageUrl VARCHAR(255) NOT NULL,
+    width INT NOT NULL,
+    height INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

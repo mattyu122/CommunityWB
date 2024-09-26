@@ -2,20 +2,10 @@ import Board from "./Board";
 import HandBill from "./HandBill/Handbill";
 
 class WhiteBoard{
-    location: String;
     boardList: Board[];
-    handbills: HandBill[];
-    totalPages: number;
-    totalHandbill: number;
-    currentPage: number;
     maxWidth: number;
     maxHeight: number;
     constructor(location: String){
-        this.handbills = [];
-        this.totalPages = 0;
-        this.totalHandbill = 0;
-        this.currentPage = 0;
-        this.location = location;
         this.maxWidth = window.innerWidth;
         this.maxHeight = window.innerHeight;
         this.boardList = [new Board(this.maxWidth, this.maxHeight)];

@@ -1,77 +1,41 @@
 package dev.communitywb.communityWB.DataModel;
 
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "HandBill")
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "handbill")
 public class HandBill {
     @Id
-    private ObjectId _id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String s3_key;
-    private String title;
-    private String description;
-    private String imageUrl;
+    private String caption;
     private Double width;
     private Double height;
+    private String address;
+
+    @Embedded
+    private LatLng location;
     
-    public void setWidth(Double width) {
-        this.width = width;
-    }
-    public Double getWidth() {
-        return width;
-    }
-
-    public void setHeight(Double height) {
-        this.height = height;
-    }
-    public Double getHeight() {
-        return height;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription(){
-        return description;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getImageUrl(){
-        return imageUrl;
-    }
-
-    public ObjectId get_id() {
-        return _id;
-    }
-
-    public void setS3_key(String s3_key) {
-        this.s3_key = s3_key;
-    }
-
-    public String getS3_key() {
-        return s3_key;
-    }
 
     @Override
     public String toString() {
         return "HandBill{" +
-                "_id=" + _id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", imageId='" + imageUrl + '\'' +
+                "id=" + id +
+                ", caption='" + caption + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", address='" + address + '\'' +
+                ", location=" + location +
                 '}';
     }
 }

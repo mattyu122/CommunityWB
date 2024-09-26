@@ -7,7 +7,7 @@ interface HandBillProps{
 const HandBillComponent = ({handBill, onClickHandBillHandler}:HandBillProps) => {
     return (
         <div onClick={() => onClickHandBillHandler(handBill)}>
-            <img src={handBill.imageUrl} alt={`Title: ${handBill.title}\nDescription: ${handBill.description}`} style={{width:handBill.width, height:handBill.height,objectFit:'cover'}}/>
+            <img src={handBill.imageUrl} alt={`Caption: ${handBill.caption}`} style={{width:handBill.width, height:handBill.height,objectFit:'cover'}}/>
         </div>
     )
 };

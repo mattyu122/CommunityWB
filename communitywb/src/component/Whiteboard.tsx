@@ -12,7 +12,6 @@ interface whiteboardProps{
 
 const WhiteboardComponent = ({whiteBoard}:whiteboardProps) => {
     const [boardList] = useState<Board[]>(whiteBoard.boardList);
-    // const [pageData, setPageData] = useState(new HandBillPage())
     const [page, setPage] = useState(0);
     const [size] = useState(6); // Adjust the size as needed
 
@@ -20,7 +19,7 @@ const WhiteboardComponent = ({whiteBoard}:whiteboardProps) => {
 
     useEffect(()=>{
         const fetchNextPageWithDelay = async () => {
-            if (data && page < data.totalPages - 1) {
+            if (data && page < data.totalPages) {
                 console.log('fetching next page');
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Delay by 1 second
                 setPage(prevPage => prevPage + 1);
