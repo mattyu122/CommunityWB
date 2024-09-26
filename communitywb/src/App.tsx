@@ -15,7 +15,7 @@ function App() {
   return (
     <div className="App">
       <nav className="navbar">
-        <h1>Community White Board </h1>
+        <h1>Look Around</h1>
         <button onClick={()=>setIsModalOpen(true)}>Upload</button>
         <UploadBillModal 
         isOpen={isModalOpen} 
