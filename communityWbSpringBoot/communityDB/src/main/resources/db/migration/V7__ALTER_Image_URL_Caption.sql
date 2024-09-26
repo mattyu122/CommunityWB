@@ -1,3 +1,0 @@
-ALTER TABLE handbill
-DROP COLUMN image_url,
-ALTER COLUMN caption TYPE TEXT;
