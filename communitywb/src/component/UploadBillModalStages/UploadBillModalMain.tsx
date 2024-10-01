@@ -1,16 +1,16 @@
+import { CloseOutlined } from '@ant-design/icons';
+import { Button, Modal } from 'antd';
 import { LatLng } from 'leaflet';
 import { useEffect, useState } from 'react';
-import Modal from 'react-modal';
 import { useAddHandBillMutation } from '../../api/handbill/handBillQuery';
 import styles from '../../css/UploadModal.module.css';
 import HandBill from '../../DataModel/HandBill/Handbill';
 import ImageCaptionStage1 from './ImageCaptionStage1';
 import LocationStage2 from './LocationStage2';
-Modal.setAppElement('#root'); // This is important for accessibility
 
 interface UploadBillModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 // Define initial state
@@ -23,42 +23,24 @@ const initialState = {
   currentStage: 0
 };
 
-const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) => {
+const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) => {
   const [file, setFile] = useState<File | null>(initialState.file);
   const [caption, setCaption] = useState<string>(initialState.caption);
   const [location, setLocation] = useState<LatLng | null>(initialState.location);
   const [address, setAddress] = useState<string>(initialState.address);
   const [imagePreview, setImagePreview] = useState<string | null>(initialState.imagePreview);
   const [currentStage, setCurrentStage] = useState<number>(initialState.currentStage);
-
   const { mutate: addHandBill, isSuccess } = useAddHandBillMutation();
 
   // Reset form function
   const resetForm = () => {
     setFile(initialState.file);
     setCaption(initialState.caption);
-    getCurrentLocation();
     setAddress(initialState.address);
+    setLocation(initialState.location);
     setImagePreview(initialState.imagePreview);
     setCurrentStage(initialState.currentStage);
   };
-
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-          (position) => {
-              const { latitude, longitude } = position.coords;
-              setLocation(new LatLng(latitude, longitude));
-          },
-          (error) => {
-              console.error('Error fetching user location:', error);
-              setLocation(new LatLng(40.7128, -74.0060)); // Default to New York City
-          }
-      );
-  } else {
-      setLocation(new LatLng(40.7128, -74.0060)); // Default to New York City
-  }
-  }
 
   useEffect(() => {
     if (isSuccess) {
@@ -68,13 +50,29 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
   }, [isSuccess]);
 
 
-  useEffect(() => {
-    getCurrentLocation()
-  }, []);
 
   const stages = [
-    <ImageCaptionStage1 file={file} caption={caption} imagePreview={imagePreview} setFile={setFile} setCaption={setCaption} setImagePreview={setImagePreview}/>,
-    <LocationStage2 location={location} address={address} setLocation={setLocation} setAddress={setAddress} />
+    {
+      component:<ImageCaptionStage1
+                  file={file}
+                  caption={caption}
+                  imagePreview={imagePreview}
+                  setFile={setFile}
+                  setCaption={setCaption}
+                  setImagePreview={setImagePreview}
+                />,
+      title: 'Details'
+    }
+    ,
+    {
+      component: <LocationStage2
+                    location={location}
+                    address={address}
+                    setLocation={setLocation}
+                    setAddress={setAddress}
+                  />,
+      title: 'Location'
+    }
   ];
 
   const handleNext = () => {
@@ -100,26 +98,47 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
     }
   };
 
+  const modalTitle = (
+    <div className={styles.modalTitleWrapper}>
+      <Button onClick={handleBack} disabled={currentStage === 0}>
+        Back
+      </Button>
+      <div className={styles.titleCenter}>{stages[currentStage].title}</div>
+      {currentStage < stages.length - 1 ? (
+        <Button type="primary" onClick={handleNext}>
+          Next
+        </Button>
+      ) : (
+        <Button type="primary" onClick={submit}>
+          Submit
+        </Button>
+      )}
+    </div>
+  );
+
   return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} className="upload-modal">
-      <header className={styles.header}>
-        <div className={styles.iconWrapper} onClick={onClose}>
-          <img loading="lazy" src="..." className={styles.icon} alt="" />
+    <>
+      {isOpen && (
+        <CloseOutlined 
+          className={styles.closeButton} // Use the grand close button class
+          onClick={onClose}
+          />
+      )}
+      <Modal
+        title={modalTitle}
+        open={isOpen}
+        onCancel={onClose}
+        footer={null} // Remove default footer buttons
+        closable={false} // Hide default close button
+        width="60vw"
+        className={styles.modalWrapper}
+      >
+        <div className={styles.cardWrapper}>
+          {stages[currentStage].component}
         </div>
-      </header>
-      <div className={styles.cardWrapper}>
-        <div className={styles.buttonGroup}>
-          <button onClick={handleBack} disabled={currentStage === 0}>Back</button>
-          {currentStage < stages.length - 1 ? (
-            <button onClick={handleNext}>Next</button>
-          ) : (
-            <button onClick={submit}>Submit</button>
-          )}
-        </div>
-        {stages[currentStage]}
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 
-export default UploadBillModal;
+export default UploadBillModalMain;

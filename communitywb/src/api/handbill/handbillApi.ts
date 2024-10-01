@@ -1,9 +1,16 @@
 import { axiosClient, axiosClientMultipart } from '../axiosClient';
 
-export const getHandBillPages = async (page = 0, size = 10) => {
+interface HandbillPagesQueryParams {
+    lat: number;
+    lng: number;
+    radius: number;
+    page?: number;
+    size?: number;
+}
+export const getHandBillPages = async ({ lat, lng, radius, page, size }: HandbillPagesQueryParams) => {
     console.log('fetching handbill page', page);
     const response = await axiosClient.get('/whiteboard/handbillpage', {
-        params: { page, size },
+        params: { page, size, lat, lng, radius }
     });
     return {
         handBills: response.data.handBills,

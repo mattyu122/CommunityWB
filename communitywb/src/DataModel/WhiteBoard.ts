@@ -12,12 +12,6 @@ class WhiteBoard{
     }
 
     addHandBillToBoards(handBills: HandBill[]): void {
-        handBills.sort((a, b) => {
-            if(b.height === a.height){
-                return b.width - a.width;
-            }
-            return b.height - a.height;
-        });
         handBills.forEach(handBill => {
             for ( const board of this.boardList){
                 if(board.addHandBill(handBill)){
@@ -27,6 +21,10 @@ class WhiteBoard{
             this.boardList.push(new Board(this.maxWidth, this.maxHeight));
             this.boardList[this.boardList.length-1].addHandBill(handBill)
         })
+    }
+
+    clearBoards(): void {
+        this.boardList = []
     }
 
 }

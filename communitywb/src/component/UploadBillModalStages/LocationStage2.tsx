@@ -10,6 +10,7 @@ import markerIconPng from 'leaflet/dist/images/marker-icon.png';
 import markerShadowPng from 'leaflet/dist/images/marker-shadow.png';
 import { axiosClient } from '../../api/axiosClient';
 import styles from '../../css/LocationStage2.module.css';
+import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 // Define the icon
 const DefaultIcon = L.icon({
     iconUrl: markerIconPng,
@@ -33,37 +34,45 @@ setLocation: (position: LatLng) => void;
 const LocationStage2: React.FC<Stage2Props> = ({ location, address, setLocation, setAddress }) => {
 
     const [suggestions, setSuggestions] = useState<any[]>([]); // Store address suggestions
+    const { getCurrentLocation } = useCurrentLocation();
 
-    // Fetch current location and set as the map center, then reverse geocode for address
-    const handleSetCurrentLocation = () => {
-        if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-            const { latitude, longitude } = position.coords;
-            const currentLocation = new LatLng(latitude, longitude); // Create a LatLng object
-            setLocation(currentLocation); // Set current location on the map
-
-            // Reverse geocode to get address
-            try {
-                const response = await axiosClient.get(`https://nominatim.openstreetmap.org/reverse`, {
-                params: {
-                    lat: latitude,
-                    lon: longitude,
-                    format: 'json',
-                },
-                });
-
-                if (response.data && response.data.display_name) {
-                setAddress(response.data.display_name); // Set the address based on reverse geocoding
-                }
-            } catch (error) {
-                console.error('Error reverse geocoding location:', error);
-            }
+    const fetchReverseGeocode = async (loc: LatLng) => {
+        try {
+            const response = await axiosClient.get(`https://nominatim.openstreetmap.org/reverse`, {
+            params: {
+                lat: loc.lat,
+                lon: loc.lng,
+                format: 'json',
             },
-            (error) => {
-            console.error('Error fetching current location:', error);
+            });
+            if (response.data && response.data.display_name) {
+            setAddress(response.data.display_name);
             }
-        );
+        } catch (error) {
+            console.error('Error reverse geocoding location:', error);
+        }
+        };
+    // Fetch current location and set as the map center, then reverse geocode for address
+    const handleSetCurrentLocation = async () => {
+        console.log('Setting current location');
+        const loc = await getCurrentLocation();
+        console.log(loc);
+        setLocation(loc);
+        // Reverse geocode to get address
+        try {
+            const response = await axiosClient.get(`https://nominatim.openstreetmap.org/reverse`, {
+            params: {
+                lat: loc.lat,
+                lon: loc.lng,
+                format: 'json',
+            },
+            });
+
+            if (response.data && response.data.display_name) {
+            setAddress(response.data.display_name); // Set the address based on reverse geocoding
+            }
+        } catch (error) {
+            console.error('Error reverse geocoding location:', error);
         }
     };
         
@@ -110,77 +119,78 @@ const LocationStage2: React.FC<Stage2Props> = ({ location, address, setLocation,
     };
 
     // Component to center the map at the new location
-    const MapCenter: React.FC<{ location: LatLng }> = ({ location }) => {
+    const MapCenter = () => {
         const map = useMap(); // Access the map instance
         useEffect(() => {
             if (location) {
             map.setView(location); // Center the map at the new location with zoom level 13
             }
-        }, [location, map]);
+        }, [map]);
+
+        return null;
+    };
+    const MapReadyHandler = () => {
+        const map = useMap();
+
+        useEffect(() => {
+            console.log('Invalidating map size');
+            setTimeout(() => {
+                map.invalidateSize(); // Trigger invalidateSize when the map is ready
+            }, 200); // Add a slight delay to ensure the map is visible before resizing
+            
+        }, [map]);
 
         return null;
     };
 
-
     return (
-    <div className={styles.container}>
-        <h1>Select Handbill Location on Map</h1>
-        {location && (
-        <div className={styles.card}>
-            <MapContainer 
-                center={location} 
-                zoom={13} 
-                style={{ height: '600px', width: '70%' }} 
-            >
-                <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
-                />
-                {/* Component to center the map based on the location */}
-                <MapCenter location={location} />
-                <Marker
-                position={location}
-                draggable={true}
-                eventHandlers={{
-                    dragend: (e) => {
-                    const marker = e.target as L.Marker;
-                    const newPos = marker.getLatLng();
-                    setLocation(newPos); // Update position
-                    },
-                }}
-                />
-                {/* <Circle center={location} radius={radius} /> */}
-            </MapContainer>
-            <div className={styles.mapControl}>
-                {/* Ant Design AutoComplete Component */}
-                <AutoComplete
-                options={suggestions}
-                style={{ width: '100%' }}
-                value={address}
-                onSearch={handleAddressChange}
-                onSelect={handleSuggestionSelect}
+        <div className={styles.container}>
+            {location && (
+            <div className={styles.card}>
+                <MapContainer 
+                    center={location} 
+                    zoom={13} 
+                    className={styles.map}
                 >
-                <Input.Search
-                placeholder="Enter address"
-                enterButton={
-                    <Button icon={<AimOutlined />} onClick={handleSetCurrentLocation}/>
-                }
-                />
-                </AutoComplete>
-                {/* <label htmlFor="radius">Radius: {radius} meters</label> */}
-                {/* <input
-                type="range"
-                value={radius}
-                min={100}
-                max={5000}
-                step={10}
-                onChange={(e) => setRadius(parseInt(e.target.value))}
-                placeholder="Radius in meters"
-                /> */}
+                    <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
+                    />
+                    <MapReadyHandler />
+                    {/* Component to center the map based on the location */}
+                    <MapCenter />
+                    <Marker
+                    position={location}
+                    draggable={true}
+                    eventHandlers={{
+                        dragend: async (e) => {
+                        const marker = e.target as L.Marker;
+                        const newPos = marker.getLatLng();
+                        setLocation(newPos);
+                        await fetchReverseGeocode(newPos); // Update address after marker is moved
+                        },
+                    }}
+                    />
+                </MapContainer>
+                <div className={styles.mapControl}>
+                    <AutoComplete
+                    options={suggestions}
+                    style={{ width: '100%' }}
+                    value={address}
+                    onSearch={handleAddressChange}
+                    onSelect={handleSuggestionSelect}
+                    >
+                    <Input.Search
+                    placeholder="Enter address"
+                    enterButton={
+                        <Button icon={<AimOutlined />} onClick={handleSetCurrentLocation}/>
+                    }
+                    />
+                    </AutoComplete>
+                </div>
             </div>
+            )}
         </div>
-        )}
-    </div>
     );
 };
 

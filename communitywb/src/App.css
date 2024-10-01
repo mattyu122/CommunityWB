@@ -1,15 +1,27 @@
-.App {
-  text-align: center;
-  width: 100%; /* Ensure the parent container takes full width */
+/* General Layout Styling */
+.app-layout {
+  min-height: 100vh;
 }
 
-.navbar {
-  background-color: #282c34;
-  min-height: 60px;
-  width: 100%; /* Set navbar width to 100% */
+/* Header Styling */
+.app-header {
+  background-color: #001529;
+  color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
-  box-sizing: border-box; /* Ensure padding doesn't affect the total width */
+  padding: 0 20px;
+}
+
+/* Title Styling */
+.app-title {
+  color: #fff;
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Content Styling */
+.app-content {
+  padding: 5px;
+  display: flex;
 }

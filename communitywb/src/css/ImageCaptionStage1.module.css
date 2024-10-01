@@ -1,0 +1,70 @@
+.card {
+    display:flex;
+    flex-direction:row;
+}
+.left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    gap: 20px; /* Add spacing between the preview and button */
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    gap: 20px; /* Add spacing between the preview and button */
+}
+
+.uploadWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    cursor: pointer; /* Make the image area clickable */
+}
+
+.previewImage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: filter 0.3s ease-in-out; /* Smooth transition for darkening effect */
+}
+
+.uploadWrapper:hover .previewImage {
+    filter: brightness(0.7); /* Darken the image on hover */
+}
+
+.uploadButton {
+    background-color: #5b32ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .leftImg {
+    padding: 10px;
+    }
+
+    .uploadButton {
+    width: 100%; /* Full width for mobile */
+    }
+}
+
+.captionWrapper {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.caption {
+    font-size: 16px;
+    margin-bottom: 8px;
+}

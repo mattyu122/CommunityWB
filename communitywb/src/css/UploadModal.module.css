@@ -1,4 +1,4 @@
-.cardWrapper {
+/* .cardWrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -237,4 +237,44 @@
 
 .fileInput {
   display: none;
+} */
+
+.modalTitleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.titleCenter {
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.modalWrapper {
+  max-width: 100%; /* Full width on small screens */
+  width: 60%; /* Adjust modal width for larger screens */
+  margin: 0 auto; /* Center the modal */
+  overflow: hidden;
+  padding: 20px;
+  position: relative; /* To allow absolute positioning of the close button */
+}
+
+.closeButton {
+  position: fixed; /* Fix the button to the viewport */
+  top: 10px;
+  right: 10px;
+  font-size: 20px; /* Make the close icon large */
+  color: rgb(255, 250, 245); /* Use a bold color like red */
+  cursor: pointer;
+  z-index: 1000; /* Ensure it stays on top of other elements */
+  transition: all 0.3s ease-in-out;
+}
+
+
+@media (max-width: 768px) {
+  .modalWrapper {
+    width: 90%; /* Make the modal almost full width on mobile */
+  }
 }
