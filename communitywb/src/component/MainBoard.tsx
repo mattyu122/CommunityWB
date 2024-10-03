@@ -34,7 +34,7 @@ const MainBoardComponent = () => {
     };
 
     const fetchNextPageWithDelay = async () => {
-        if (data && page < data.totalPages - 1) {
+        if (data && page < data.totalPages) {
             await new Promise(resolve => setTimeout(resolve, 1000)); // Delay by 1 second
             setPage(prevPage => prevPage + 1);
         }
@@ -63,13 +63,9 @@ const MainBoardComponent = () => {
         console.log('Handbill clicked:', handBill);
     }, []);
 
-    const onButtonClick = () => {
-        console.log('Current board list:', boardList);
-    };
 
     return (
         <div className="whiteboard">
-            <button onClick={onButtonClick}>Show Board List in Console</button>
             {boardList.map((board, boardIndex) => (
                 <div
                     key={boardIndex}

@@ -1,6 +1,6 @@
 import { LatLng } from 'leaflet';
+import { GetHandBillPageDto } from '../../dto/handbill/getHandBillPageDto';
 import { axiosClient, axiosClientMultipart } from '../axiosClient';
-
 interface HandbillPagesQueryParams {
     location: LatLng;
     radius: number;
@@ -29,14 +29,8 @@ export const getHandBillPages = async ({
             },
         });
 
-        const { handBills, totalPages, totalElements, currentPage } = data;
-        console.log("currentPage", currentPage, "handbills", handBills);
-        return {
-            handBills,
-            totalPages,
-            totalElements,
-            currentPage,
-        };
+        const handBillPage :GetHandBillPageDto = data;
+        return handBillPage;
     } catch (error) {
         console.error('Error fetching handbill pages:', error);
         throw new Error('Failed to fetch handbill pages.');

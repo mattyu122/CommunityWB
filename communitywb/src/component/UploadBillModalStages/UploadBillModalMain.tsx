@@ -4,7 +4,7 @@ import { LatLng } from 'leaflet';
 import { useEffect, useState } from 'react';
 import { useAddHandBillMutation } from '../../api/handbill/handBillQuery';
 import styles from '../../css/UploadModal.module.css';
-import HandBill from '../../DataModel/HandBill/Handbill';
+import { AddHandBillDTO, AddHandBillForm } from '../../dto/handbill/addHandBillDto';
 import ImageCaptionStage1 from './ImageCaptionStage1';
 import LocationStage2 from './LocationStage2';
 
@@ -45,7 +45,7 @@ const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }
   useEffect(() => {
     if (isSuccess) {
       resetForm();
-      // onClose();
+      onClose();
     }
   }, [isSuccess]);
 
@@ -88,10 +88,16 @@ const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }
   };
 
   const submit = async () => {
-    if (file && caption) {
-      console.log('Submitting');
-      const handBill = new HandBill(file, caption, location, address);
-      const formData = handBill.toFormData();
+    if (file && caption && address) {
+      const newHandBill: AddHandBillDTO = {
+        file: file,
+        caption: caption,
+        width: 300,
+        height: 150,
+        location: location, 
+        address: address,
+      };
+      const formData = AddHandBillForm.toFormData(newHandBill);
       addHandBill(formData);
     } else {
       alert('Please fill out all fields.');

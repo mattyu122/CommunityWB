@@ -13,17 +13,17 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
   
-  const onClose = useCallback(() => {
+  const onUploadBillClose = useCallback(() => {
     setIsModalOpen(false);
   }, []);
 
-  const showModal = () => {
+  const showUploadBillModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseMapModal = () => {
+  const handleCloseMapModal = useCallback(() => {
     setIsMapModalOpen(false);
-  };
+  },[]);
 
   const handleShowMapModal = () => {
     setIsMapModalOpen(true);
@@ -33,7 +33,7 @@ function App() {
     <Layout className="app-layout">
       <Header className="app-header">
         <h1 className="app-title">Look Around</h1>
-        <Button type="primary" icon={<UploadOutlined />} onClick={showModal}>
+        <Button type="primary" icon={<UploadOutlined />} onClick={showUploadBillModal}>
           Upload
         </Button>
         <Button type="primary" icon={<EnvironmentOutlined />} onClick={handleShowMapModal} style={{ marginLeft: '10px' }}>
@@ -47,7 +47,7 @@ function App() {
 
       <UploadBillModalMain 
         isOpen={isModalOpen} 
-        onClose={onClose} 
+        onClose={onUploadBillClose} 
       />
 
       <Modal
