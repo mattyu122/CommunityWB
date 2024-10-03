@@ -1,7 +1,8 @@
-import { Button, Slider } from 'antd';
+import { Button, Slider, Typography } from 'antd';
 import { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css'; // Ensure CSS is loaded
 import React, { useEffect, useState } from 'react';
+import { Circle } from 'react-leaflet';
 import styles from '../css/LocationMap.module.css';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
 import { useReverseGeocode } from '../hooks/useReverseGeocode';
@@ -10,14 +11,15 @@ import AddressAutoComplete from './Map/AddressAutoComplete';
 import MapCenter from './Map/MapCenter';
 import MapComponent from './Map/MapComponent';
 import MapReadyHandler from './Map/MapReadyHandler';
+const { Title } = Typography;
     interface LocationMapProps {
         isOpen: boolean;
         onClose: () => void;
     }
     
     const LocationMap: React.FC<LocationMapProps> = ({ isOpen, onClose}) => {
-    // const [address, setAddress] = useState<string>('');
-    const { address, setAddress, fetchReverseGeocode } = useReverseGeocode();
+    const [address, setAddress] = useState<string>('');
+    const { fetchReverseGeocode } = useReverseGeocode();
     const { getCurrentLocation } = useCurrentLocation();
     const { currentLocation, location,setLocation, setRadius } = useLocationStore();
     const [modalRadius, setModalRadius] = useState<number>(500);
@@ -34,9 +36,13 @@ import MapReadyHandler from './Map/MapReadyHandler';
 
 
     useEffect(() => {
-        if (modalLocation) {
-            fetchReverseGeocode(modalLocation);
+        const fetchReverseGeoCodeFun = async ()=>{
+            if (modalLocation) {
+                const tmpAddress = await fetchReverseGeocode(modalLocation);
+                setAddress(tmpAddress);
+            }
         }
+        fetchReverseGeoCodeFun();
     }, [modalLocation]);
 
     const handleSetCurrentLocation = async () => {
@@ -70,9 +76,11 @@ import MapReadyHandler from './Map/MapReadyHandler';
             <MapComponent location={modalLocation} setLocation={setModalLocation} radius={modalRadius}>
                 <MapCenter location={modalLocation} zoom={13} />
                 <MapReadyHandler isOpen={isOpen} />
+                <Circle center={modalLocation} radius={modalRadius} color="blue" fillColor="blue" fillOpacity={0.2} />
             </MapComponent>
         )}
         <Slider min={100} max={5000} value={modalRadius} onChange={setModalRadius} />
+        <label >Radius: {modalRadius} meters</label>
         <Button type="primary" onClick={handleOnClickSetLocation}>
             Set Location
         </Button>

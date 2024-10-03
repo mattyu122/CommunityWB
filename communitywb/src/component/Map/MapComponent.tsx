@@ -1,6 +1,6 @@
 import { LatLng } from 'leaflet';
 import React from 'react';
-import { Circle, MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 
 interface MapComponentProps {
     location: LatLng;
@@ -11,7 +11,7 @@ interface MapComponentProps {
 
 const MapComponent: React.FC<MapComponentProps> = ({ location, radius, setLocation, children }) => {
     return (
-        <MapContainer center={location} zoom={13} style={{ height: '500px' }}>
+        <MapContainer center={location} zoom={13} style={{ height: '550px' }}>
             <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
@@ -27,8 +27,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ location, radius, setLocati
                 },
             }}
             />
-            <Circle center={location} radius={radius} color="blue" fillColor="blue" fillOpacity={0.2} />
-            {children} {/* Insert children here */}
+            {children}
         </MapContainer>
     );
 };

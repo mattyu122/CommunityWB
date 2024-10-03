@@ -137,7 +137,6 @@ const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }
         footer={null} // Remove default footer buttons
         closable={false} // Hide default close button
         width="60vw"
-        className={styles.modalWrapper}
       >
         <div className={styles.cardWrapper}>
           {stages[currentStage].component}

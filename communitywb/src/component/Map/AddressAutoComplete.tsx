@@ -37,17 +37,17 @@ const AddressAutoComplete: React.FC<AddressAutoCompleteProps> = ({
     };
 
     const handleAddressChange = async (inputValue: string) => {
-    setAddress(inputValue);
-    if (inputValue.length > 2) {
-        await fetchAddressSuggestions(inputValue);
-    } else {
-        setSuggestions([]);
-    }
+        setAddress(inputValue);
+        if (inputValue.length > 2) {
+            await fetchAddressSuggestions(inputValue);
+        } else {
+            setSuggestions([]);
+        }
     };
 
     const handleSuggestionSelect = (value: string, option: any) => {
-    setAddress(value);
-    setLocation({ lat: parseFloat(option.lat), lon: parseFloat(option.lon) });
+        setAddress(value);
+        setLocation({ lat: parseFloat(option.lat), lon: parseFloat(option.lon) });
     };
 
     return (
