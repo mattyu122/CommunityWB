@@ -45,7 +45,7 @@ const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }
   useEffect(() => {
     if (isSuccess) {
       resetForm();
-      onClose();
+      // onClose();
     }
   }, [isSuccess]);
 

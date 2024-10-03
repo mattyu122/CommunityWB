@@ -1,4 +1,5 @@
-import HandBill from "../DataModel/HandBill/Handbill";
+// import HandBill from "../DataModel/HandBill/Handbill";
+import { HandBill } from '../models/HandBill';
 
 interface HandBillProps{
     handBill: HandBill;

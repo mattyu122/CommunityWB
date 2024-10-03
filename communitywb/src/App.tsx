@@ -1,23 +1,18 @@
 import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Layout, Modal } from 'antd';
-import { LatLng } from 'leaflet';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import './App.css'; // Import the external CSS file
 import LocationMap from './component/LocationMap';
 import MainBoardComponent from './component/MainBoard';
 import UploadBillModalMain from './component/UploadBillModalStages/UploadBillModalMain';
 import styles from './css/UploadModal.module.css';
-import WhiteBoard from './DataModel/WhiteBoard';
 
 const { Header, Content } = Layout;
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
-  const [location, setLocation] = useState<LatLng | null>(new LatLng(40.7128, -74.0060));
-  const [radius, setRadius] = useState<number>(500);
-  const whiteboardRef = useRef(new WhiteBoard("Bayview"));
-
+  
   const onClose = useCallback(() => {
     setIsModalOpen(false);
   }, []);
@@ -47,7 +42,7 @@ function App() {
       </Header>
 
       <Content className="app-content">
-        <MainBoardComponent whiteBoard={whiteboardRef.current} location={location} setLocation={setLocation} radius={radius}/>
+        <MainBoardComponent/>
       </Content>
 
       <UploadBillModalMain 
@@ -64,7 +59,7 @@ function App() {
           width="60vw"
         >
           <div className={styles.cardWrapper}>
-            <LocationMap isOpen={isMapModalOpen} onClose={handleCloseMapModal} setLocation={setLocation} setRadius={setRadius} />
+            <LocationMap isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
           </div>
       </Modal>
     </Layout>

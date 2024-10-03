@@ -1,4 +1,4 @@
-    import { AimOutlined } from '@ant-design/icons';
+import { AimOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Input, Slider } from 'antd';
 import { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css'; // Ensure CSS is loaded
@@ -6,33 +6,44 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Circle, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import { axiosClient } from '../api/axiosClient';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
+import { useLocationStore } from '../stores/locationStore';
 
     interface LocationMapProps {
-    isOpen: boolean;
-    onClose: () => void;
-    setLocation: (position: LatLng) => void;
-    setRadius: (radius: number) => void;
+        isOpen: boolean;
+        onClose: () => void;
     }
-
-    const LocationMap: React.FC<LocationMapProps> = ({ isOpen, onClose, setLocation, setRadius }) => {
+    
+    const LocationMap: React.FC<LocationMapProps> = ({ isOpen, onClose}) => {
     const [address, setAddress] = useState<string>('');
     const [suggestions, setSuggestions] = useState<any[]>([]);
-    const { currentLocation,getCurrentLocation } = useCurrentLocation();
+    const { getCurrentLocation } = useCurrentLocation();
+    const { currentLocation, location,setLocation, setRadius } = useLocationStore();
+
     const [modalRadius, setModalRadius] = useState<number>(500);
-    const [modalLocation, setModalLocation] = useState<LatLng>(currentLocation);
-    const [radius, updateRadius] = useState(500);
+    const [modalLocation, setModalLocation] = useState<LatLng | null>(currentLocation);
 
     const mapRef = useRef<L.Map | null>(null);
 
-
+    const isSameLocation = (loc1: LatLng, loc2: LatLng, epsilon = 1e-5) => {
+        return (
+            Math.abs(loc1.lat - loc2.lat) < epsilon &&
+            Math.abs(loc1.lng - loc2.lng) < epsilon
+        );
+    };
     useEffect(() => {
         handleSetCurrentLocation();
     }, []);
 
+
+    useEffect(() => {
+        if (modalLocation) {
+            fetchReverseGeocode(modalLocation);
+        }
+    }, [modalLocation]);
+
     const handleSetCurrentLocation = async () => {
-    const loc = await getCurrentLocation();
-    setModalLocation(loc);
-    fetchReverseGeocode(loc);
+        const currentLoc = await getCurrentLocation();
+        setModalLocation(currentLoc);
     };
 
     const fetchReverseGeocode = async (loc: LatLng) => {
@@ -88,7 +99,6 @@ import { useCurrentLocation } from '../hooks/useCurrentLocation';
     };
 
     const handleRadiusChange = (value: number) => {
-        updateRadius(value);
         setModalRadius(value);
     };
 
@@ -105,7 +115,6 @@ import { useCurrentLocation } from '../hooks/useCurrentLocation';
 
         useEffect(() => {
             if (isOpen) {
-            console.log('Invalidating map size');
             setTimeout(() => {
                 map.invalidateSize(); // Trigger invalidateSize when the map is ready
             }, 200); // Add a slight delay to ensure the map is visible before resizing
@@ -116,7 +125,13 @@ import { useCurrentLocation } from '../hooks/useCurrentLocation';
     };
 
     const handleOnClickSetLocation = () => {
-        setLocation(modalLocation);
+        if(isSameLocation(modalLocation?? new LatLng(0,0), location?? new LatLng(0,0))){
+            console.log('Coordinates are approximately the same. Location not updated.');
+        }else{
+            console.log('Coordinates have changed. Updating location.');
+            setLocation(modalLocation?? new LatLng(0,0));
+
+        }
         setRadius(modalRadius);
         onClose();
     }
@@ -146,7 +161,7 @@ import { useCurrentLocation } from '../hooks/useCurrentLocation';
                 <MapCenter/>
                 <Circle
                     center={modalLocation}
-                    radius={radius}
+                    radius={modalRadius}
                     color="blue"
                     fillColor="blue"
                     fillOpacity={0.2}
@@ -159,18 +174,17 @@ import { useCurrentLocation } from '../hooks/useCurrentLocation';
                         const marker = e.target as L.Marker;
                         const newPos = marker.getLatLng();
                         setModalLocation(newPos);
-                        await fetchReverseGeocode(newPos); // Update address after marker is moved
                 },}}/>
             </MapContainer>
 
             <Slider
             min={100}
             max={5000}
-            value={radius}
+            value={modalRadius}
             onChange={handleRadiusChange}
             style={{ marginBottom: '20px' }}
             />
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>Radius: {radius} meters</div>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>Radius: {modalRadius} meters</div>
             <Button type="primary" onClick={handleOnClickSetLocation}>
                 Set Location
             </Button>
