@@ -15,9 +15,10 @@ import HandBillComponent from './Handbill';
 const MainBoardComponent = () => {
     const [boardList, setBoardList] = useState<Board[]>([]);
     const [page, setPage] = useState(0);
+    
     const { getCurrentLocation } = useCurrentLocation();
-
     const { location, radius, setLocation } = useLocationStore();
+
     const { data, isPending } = useHandbillPagesQuery({
         location: location ?? new LatLng(0, 0),
         radius,
@@ -65,34 +66,35 @@ const MainBoardComponent = () => {
 
 
     return (
-        <div className="whiteboard">
-            {boardList.map((board, boardIndex) => (
-                <div
-                    key={boardIndex}
-                    className="photo-display"
-                    style={{ width: board.maxWidth, height: board.maxHeight }}
-                >
-                    {board.handbills.map((handBill, index) => (
-                        <div
-                            key={handBill.id}
-                            style={{
-                                position: 'absolute',
-                                left: `${handBill.positionX}px`,
-                                top: `${handBill.positionY}px`,
-                                width: `${handBill.width + 10}px`,
-                                height: `${handBill.height + 10}px`,
-                            }}
-                        >
-                            <HandBillComponent handBill={handBill} onClickHandBillHandler={onHandBillClick} />
-                        </div>
-                    ))}
-                </div>
-            ))}
-
+        <div>
+            <div className="whiteboard">
+                {boardList.map((board, boardIndex) => (
+                    <div
+                        key={boardIndex}
+                        className="photo-display"
+                        style={{ width: board.maxWidth, height: board.maxHeight }}
+                    >
+                        {board.handbills.map((handBill, index) => (
+                            <div
+                                key={handBill.id}
+                                style={{
+                                    position: 'absolute',
+                                    left: `${handBill.positionX}px`,
+                                    top: `${handBill.positionY}px`,
+                                    width: `${handBill.width + 10}px`,
+                                    height: `${handBill.height + 10}px`,
+                                }}
+                            >
+                                <HandBillComponent handBill={handBill} onClickHandBillHandler={onHandBillClick} />
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
             {isPending && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-                    <Spin tip="Loading more handbills..." />
-                </div>
+                    <div style={{ display: 'flex', flexDirection:'row' ,justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+                        <Spin tip="Loading more handbills..." />
+                    </div>
             )}
         </div>
     );
