@@ -1,4 +1,4 @@
-import { Button, Slider, Typography } from 'antd';
+import { Button, Modal, Slider } from 'antd';
 import { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css'; // Ensure CSS is loaded
 import React, { useEffect, useState } from 'react';
@@ -11,7 +11,6 @@ import AddressAutoComplete from './Map/AddressAutoComplete';
 import MapCenter from './Map/MapCenter';
 import MapComponent from './Map/MapComponent';
 import MapReadyHandler from './Map/MapReadyHandler';
-const { Title } = Typography;
     interface LocationMapProps {
         isOpen: boolean;
         onClose: () => void;
@@ -52,12 +51,9 @@ const { Title } = Typography;
 
 
     const handleOnClickSetLocation = () => {
-        if(isSameLocation(modalLocation?? new LatLng(0,0), location?? new LatLng(0,0))){
-            console.log('Coordinates are approximately the same. Location not updated.');
-        }else{
+        if(!isSameLocation(modalLocation?? new LatLng(0,0), location?? new LatLng(0,0))){
             console.log('Coordinates have changed. Updating location.');
             setLocation(modalLocation?? new LatLng(0,0));
-
         }
         setRadius(modalRadius);
         onClose();
@@ -65,26 +61,34 @@ const { Title } = Typography;
     
 
     return (
-    <div className={styles.container}>
-        <AddressAutoComplete
-            address={address}
-            setAddress={setAddress}
-            setLocation={({ lat, lon }) => setModalLocation(new LatLng(lat, lon))}
-            onUseCurrentLocation={() => getCurrentLocation().then(setModalLocation)}
-        />
-        {modalLocation && (
-            <MapComponent location={modalLocation} setLocation={setModalLocation} radius={modalRadius}>
-                <MapCenter location={modalLocation} zoom={13} />
-                <MapReadyHandler isOpen={isOpen} />
-                <Circle center={modalLocation} radius={modalRadius} color="blue" fillColor="blue" fillOpacity={0.2} />
-            </MapComponent>
-        )}
-        <Slider min={100} max={5000} value={modalRadius} onChange={setModalRadius} />
-        <label >Radius: {modalRadius} meters</label>
-        <Button type="primary" onClick={handleOnClickSetLocation}>
-            Set Location
-        </Button>
-    </div>
+        <Modal
+        title="Set Location and Radius"
+        open={isOpen}
+        onCancel={onClose}
+        footer={null}
+        width="60vw"
+        >
+            <div className={styles.container}>
+                <AddressAutoComplete
+                    address={address}
+                    setAddress={setAddress}
+                    setLocation={({ lat, lon }) => setModalLocation(new LatLng(lat, lon))}
+                    onUseCurrentLocation={() => getCurrentLocation().then(setModalLocation)}
+                />
+                {modalLocation && (
+                    <MapComponent location={modalLocation} setLocation={setModalLocation} radius={modalRadius}>
+                        <MapCenter location={modalLocation} zoom={13} />
+                        <MapReadyHandler isOpen={isOpen} />
+                        <Circle center={modalLocation} radius={modalRadius} color="blue" fillColor="blue" fillOpacity={0.2} />
+                    </MapComponent>
+                )}
+                <Slider min={100} max={5000} value={modalRadius} onChange={setModalRadius} />
+                <label >Radius: {modalRadius} meters</label>
+                <Button type="primary" onClick={handleOnClickSetLocation}>
+                    Set Location
+                </Button>
+            </div>
+        </Modal>
     )
     };
 

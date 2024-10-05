@@ -10,12 +10,10 @@ import { useLocationStore } from '../stores/locationStore';
 import { processHandBills } from '../utils/handbillProcessing';
 import HandBillComponent from './Handbill';
 
-
-
 const MainBoardComponent = () => {
     const [boardList, setBoardList] = useState<Board[]>([]);
     const [page, setPage] = useState(0);
-    
+
     const { getCurrentLocation } = useCurrentLocation();
     const { location, radius, setLocation } = useLocationStore();
 
@@ -47,7 +45,6 @@ const MainBoardComponent = () => {
         setPage(0);
     }, [location, radius]);
 
-
     // Fetch user's current location on component mount
     useEffect(() => {
         fetchCurrentLocation();
@@ -64,37 +61,37 @@ const MainBoardComponent = () => {
         console.log('Handbill clicked:', handBill);
     }, []);
 
-
     return (
-        <div>
-            <div className="whiteboard">
-                {boardList.map((board, boardIndex) => (
-                    <div
-                        key={boardIndex}
-                        className="photo-display"
-                        style={{ width: board.maxWidth, height: board.maxHeight }}
-                    >
-                        {board.handbills.map((handBill, index) => (
-                            <div
-                                key={handBill.id}
-                                style={{
-                                    position: 'absolute',
-                                    left: `${handBill.positionX}px`,
-                                    top: `${handBill.positionY}px`,
-                                    width: `${handBill.width + 10}px`,
-                                    height: `${handBill.height + 10}px`,
-                                }}
-                            >
-                                <HandBillComponent handBill={handBill} onClickHandBillHandler={onHandBillClick} />
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
-            {isPending && (
-                    <div style={{ display: 'flex', flexDirection:'row' ,justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-                        <Spin tip="Loading more handbills..." />
-                    </div>
+        <div className="main-container">
+            {isPending ? (
+                <div className="loading-container">
+                    <Spin tip="Loading more handbills..." />
+                </div>
+            ) : (
+                <div className="whiteboard">
+                    {boardList.map((board, boardIndex) => (
+                        <div
+                            key={boardIndex}
+                            className="photo-display"
+                            style={{ width: board.maxWidth, height: board.maxHeight }}
+                        >
+                            {board.handbills.map((handBill, index) => (
+                                <div
+                                    key={handBill.id}
+                                    style={{
+                                        position: 'absolute',
+                                        left: `${handBill.positionX}px`,
+                                        top: `${handBill.positionY}px`,
+                                        width: `${handBill.width + 10}px`,
+                                        height: `${handBill.height + 10}px`,
+                                    }}
+                                >
+                                    <HandBillComponent handBill={handBill} onClickHandBillHandler={onHandBillClick} />
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     );

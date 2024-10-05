@@ -1,11 +1,10 @@
 import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Layout, Modal } from 'antd';
+import { Button, Layout } from 'antd';
 import { useCallback, useState } from 'react';
 import './App.css'; // Import the external CSS file
 import LocationMap from './component/LocationMap';
 import MainBoardComponent from './component/MainBoard';
 import UploadBillModalMain from './component/UploadBillModalStages/UploadBillModalMain';
-import styles from './css/UploadModal.module.css';
 
 const { Header, Content } = Layout;
 
@@ -45,23 +44,8 @@ function App() {
         <MainBoardComponent/>
       </Content>
 
-      <UploadBillModalMain 
-        isOpen={isModalOpen} 
-        onClose={onUploadBillClose} 
-      />
-
-      <Modal
-          title="Set Location and Radius"
-          open={isMapModalOpen}
-          onCancel={handleCloseMapModal}
-          footer={null}
-          className={styles.modalWrapper}
-          width="60vw"
-        >
-          <div className={styles.cardWrapper}>
-            <LocationMap isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
-          </div>
-      </Modal>
+      <UploadBillModalMain isOpen={isModalOpen} onClose={onUploadBillClose} />
+      <LocationMap isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
     </Layout>
   );
 }
