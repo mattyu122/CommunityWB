@@ -16,7 +16,7 @@ import MapReadyHandler from './Map/MapReadyHandler';
         onClose: () => void;
     }
     
-    const LocationMap: React.FC<LocationMapProps> = ({ isOpen, onClose}) => {
+    const LocationMapModal: React.FC<LocationMapProps> = ({ isOpen, onClose}) => {
     const [address, setAddress] = useState<string>('');
     const { fetchReverseGeocode } = useReverseGeocode();
     const { getCurrentLocation } = useCurrentLocation();
@@ -92,4 +92,4 @@ import MapReadyHandler from './Map/MapReadyHandler';
     )
     };
 
-    export default LocationMap;
+    export default LocationMapModal;

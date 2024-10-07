@@ -23,7 +23,7 @@ const initialState = {
   currentStage: 0
 };
 
-const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) => {
+const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) => {
   const [file, setFile] = useState<File | null>(initialState.file);
   const [caption, setCaption] = useState<string>(initialState.caption);
   const [location, setLocation] = useState<LatLng | null>(initialState.location);
@@ -146,4 +146,4 @@ const UploadBillModalMain: React.FC<UploadBillModalProps> = ({ isOpen, onClose }
   );
 };
 
-export default UploadBillModalMain;
+export default UploadBillModal;

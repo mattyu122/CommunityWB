@@ -2,9 +2,9 @@ import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Layout } from 'antd';
 import { useCallback, useState } from 'react';
 import './App.css'; // Import the external CSS file
-import LocationMap from './component/LocationMap';
+import LocationMapModal from './component/LocationMapModal';
 import MainBoardComponent from './component/MainBoard';
-import UploadBillModalMain from './component/UploadBillModalStages/UploadBillModalMain';
+import UploadBillModal from './component/UploadBillModal/UploadBillModal';
 
 const { Header, Content } = Layout;
 
@@ -44,8 +44,8 @@ function App() {
         <MainBoardComponent/>
       </Content>
 
-      <UploadBillModalMain isOpen={isModalOpen} onClose={onUploadBillClose} />
-      <LocationMap isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
+      <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
+      <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
     </Layout>
   );
 }
