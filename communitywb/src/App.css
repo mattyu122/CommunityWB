@@ -1,3 +1,13 @@
+
+:root {
+  --primary-blue: #87CEEB;   /* Sky Blue */
+  --primary-green: #32CD32;  /* Leafy Green */
+  --accent-orange: #FFA07A;  /* Sunset Orange */
+  --neutral-beige: #F5F5DC;  /* Soft Beige */
+  --text-dark: #2C3E50;      /* Deep Navy */
+  --text-light: #FFFFFF;     /* White */
+}
+
 /* General Layout Styling */
 .app-layout {
   min-height: 100vh;
@@ -5,17 +15,21 @@
 
 /* Header Styling */
 .app-header {
-  background-color: #001529;
-  color: #fff;
+  background-color: var(--primary-blue);
+  background: linear-gradient(135deg, #87CEEB 30%, #32CD32 100%);
+  color: var(--primary-blue);
   display: flex;
+  top: 0;
+  z-index: 1;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  position: sticky;
 }
 
 /* Title Styling */
 .app-title {
-  color: #fff;
+  color: var(--text-light);
   margin: 0;
   font-size: 24px;
 }

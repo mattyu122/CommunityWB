@@ -32,12 +32,19 @@ function App() {
     <Layout className="app-layout">
       <Header className="app-header">
         <h1 className="app-title">Look Around</h1>
-        <Button type="primary" icon={<UploadOutlined />} onClick={showUploadBillModal}>
-          Upload
-        </Button>
-        <Button type="primary" icon={<EnvironmentOutlined />} onClick={handleShowMapModal} style={{ marginLeft: '10px' }}>
-            Set Location
-        </Button>
+        <div>
+          <Button 
+            type="primary" 
+            icon={<EnvironmentOutlined />} 
+            onClick={handleShowMapModal} 
+            style={{ marginRight: '10px' }}>
+          </Button>
+          <Button 
+            type="primary" 
+            icon={<UploadOutlined />} 
+            onClick={showUploadBillModal}>
+          </Button>
+        </div>
       </Header>
 
       <Content className="app-content">
