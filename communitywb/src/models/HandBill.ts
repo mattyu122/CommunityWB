@@ -2,7 +2,6 @@ import { LatLng } from "leaflet";
 
 export interface HandBill {
     id: string;
-    s3_key: string;
     caption: string;
     imageUrl: string;
     file: File;

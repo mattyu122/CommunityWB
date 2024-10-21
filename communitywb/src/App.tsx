@@ -1,59 +1,34 @@
-import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Layout } from 'antd';
-import { useCallback, useState } from 'react';
+import { useEffect } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css'; // Import the external CSS file
-import LocationMapModal from './component/LocationMapModal';
-import MainBoardComponent from './component/MainBoard';
-import UploadBillModal from './component/UploadBillModal/UploadBillModal';
-
-const { Header, Content } = Layout;
-
+import ConfirmContact from './page/ConfirmContact';
+import LoginSignUpPage from './page/LoginSignUp';
+import MainPage from './page/Main';
+import { useUserStore } from './stores/userStateStore';
 function App() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
-  
-  const onUploadBillClose = useCallback(() => {
-    setIsModalOpen(false);
-  }, []);
+  const { setTokens, setUser } = useUserStore();
 
-  const showUploadBillModal = () => {
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+      // Check if tokens exist in localStorage
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
+      const idToken = localStorage.getItem('idToken');
 
-  const handleCloseMapModal = useCallback(() => {
-    setIsMapModalOpen(false);
-  },[]);
+      if (accessToken && refreshToken && idToken) {
+          // Restore tokens to the Zustand store
+          setTokens(accessToken, refreshToken, idToken);
 
-  const handleShowMapModal = () => {
-    setIsMapModalOpen(true);
-  }
+      }
+  }, [setTokens, setUser]);
 
   return (
-    <Layout className="app-layout">
-      <Header className="app-header">
-        <h1 className="app-title">Look Around</h1>
-        <div>
-          <Button 
-            type="primary" 
-            icon={<EnvironmentOutlined />} 
-            onClick={handleShowMapModal} 
-            style={{ marginRight: '10px' }}>
-          </Button>
-          <Button 
-            type="primary" 
-            icon={<UploadOutlined />} 
-            onClick={showUploadBillModal}>
-          </Button>
-        </div>
-      </Header>
-
-      <Content className="app-content">
-        <MainBoardComponent/>
-      </Content>
-
-      <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
-      <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
-    </Layout>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/loginSignUp" element={<LoginSignUpPage/>} />
+        <Route path="/confirmEmail" element={<ConfirmContact/>} />
+      </Routes>
+    </Router>
   );
 }
 

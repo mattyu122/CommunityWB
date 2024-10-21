@@ -3,6 +3,10 @@ import { HandBill } from "../models/HandBill";
 import { Node } from "../models/Node";
 
 export const processHandBills = (currentBoardList: Board[], handBills: HandBill[]): Board[] => {
+    if (!Array.isArray(currentBoardList) || !Array.isArray(handBills)) {
+        console.error("Invalid inputs passed to processHandBills. Expected arrays.");
+        return [];
+    }
     let updatedBoardList = [...currentBoardList];
     const existingHandBillIds = new Set<string>();
 

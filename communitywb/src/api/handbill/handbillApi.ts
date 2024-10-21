@@ -19,7 +19,7 @@ export const getHandBillPages = async ({
             throw new Error('Invalid location coordinates provided.');
         }
 
-        const { data } = await axiosClient.get('/whiteboard/handbillpage', {
+        const { data } = await axiosClient.get('/handbill/handbillpage', {
             params: {
                 page,
                 size,
@@ -28,7 +28,7 @@ export const getHandBillPages = async ({
                 radius,
             },
         });
-
+        console.log('Handbill pages fetched:', data);
         const handBillPage :GetHandBillPageDto = data;
         return handBillPage;
     } catch (error) {
@@ -38,6 +38,6 @@ export const getHandBillPages = async ({
 };
 
 export const addHandBill = async (formData: FormData) => {
-    const response = await axiosClientMultipart.post('/whiteboard/addHandBill', formData);
+    const response = await axiosClientMultipart.post('/handbill/addHandBill', formData);
     return response.data;
 }

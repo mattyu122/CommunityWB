@@ -2,7 +2,7 @@ import { Spin } from 'antd';
 import { LatLng } from 'leaflet';
 import { useCallback, useEffect, useState } from 'react';
 import { useHandbillPagesQuery } from '../api/handbill/handBillQuery';
-import '../css/Whiteboard.css';
+import styles from '../css/Whiteboard.module.css';
 import { useCurrentLocation } from '../hooks/useCurrentLocation';
 import { Board } from '../models/Board';
 import { HandBill } from '../models/HandBill';
@@ -10,7 +10,7 @@ import { useLocationStore } from '../stores/locationStore';
 import { processHandBills } from '../utils/handbillProcessing';
 import HandBillComponent from './Handbill';
 
-const MainBoardComponent = () => {
+const MainBoard = () => {
     const [boardList, setBoardList] = useState<Board[]>([]);
     const [page, setPage] = useState(0);
 
@@ -62,13 +62,13 @@ const MainBoardComponent = () => {
     }, []);
 
     return (
-        <div className="main-container">
+        <div className={styles.mainContainer}>
             {isPending ? (
-                <div className="loading-container">
+                <div className={styles.loadingContainer}>
                     <Spin tip="Loading more handbills..." />
                 </div>
             ) : (
-                <div className="whiteboard">
+                <div className={styles.whiteboard}>
                     {boardList.map((board, boardIndex) => (
                         <div
                             key={boardIndex}
@@ -97,4 +97,4 @@ const MainBoardComponent = () => {
     );
 };
 
-export default MainBoardComponent;
+export default MainBoard;
