@@ -1,34 +1,32 @@
 import { useEffect } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { axiosClient, axiosClientMultipart } from './api/axios/axiosClient';
+import { setupInterceptors } from './api/axios/axiosInterceptor';
 import './App.css'; // Import the external CSS file
+import { useNavigation } from './hooks/useNavigation';
 import ConfirmContact from './page/ConfirmContact';
 import LoginSignUpPage from './page/LoginSignUp';
 import MainPage from './page/Main';
 import { useUserStore } from './stores/userStateStore';
 function App() {
-  const { setTokens, setUser } = useUserStore();
-
+  const { navigateToLogin } = useNavigation();
+  const { accessToken } = useUserStore();
   useEffect(() => {
-      // Check if tokens exist in localStorage
-      const accessToken = localStorage.getItem('accessToken');
-      const refreshToken = localStorage.getItem('refreshToken');
-      const idToken = localStorage.getItem('idToken');
-
-      if (accessToken && refreshToken && idToken) {
-          // Restore tokens to the Zustand store
-          setTokens(accessToken, refreshToken, idToken);
-
+      // Pass navigateToLogin to interceptors
+      setupInterceptors(axiosClient, navigateToLogin);
+      setupInterceptors(axiosClientMultipart, navigateToLogin);
+  }, [navigateToLogin]);
+  useEffect(() => {
+      if (!accessToken) {
+        navigateToLogin();
       }
-  }, [setTokens, setUser]);
-
+  }, [accessToken]);
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/loginSignUp" element={<LoginSignUpPage/>} />
         <Route path="/confirmEmail" element={<ConfirmContact/>} />
       </Routes>
-    </Router>
   );
 }
 

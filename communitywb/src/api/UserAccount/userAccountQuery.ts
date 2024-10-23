@@ -16,10 +16,8 @@ export const useSignInMutation = () => {
     return useMutation({
         mutationFn: (formData: any) => signInUser(formData),
         onSuccess: () => {
-            console.log('sign in success');
         },
         onError: (error) => {
-            console.log('sign in error', error);
         }
     })
 }

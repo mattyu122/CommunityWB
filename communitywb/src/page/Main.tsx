@@ -1,70 +1,63 @@
 import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Layout } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Button, Layout, Space } from 'antd';
+import { useCallback, useState } from 'react';
 import '../App.css'; // Import the external CSS file
 import LocationMapModal from '../component/LocationMapModal';
 import MainBoard from '../component/MainBoard';
 import UploadBillModal from '../component/UploadBillModal/UploadBillModal';
-import { useUserStore } from '../stores/userStateStore';
-
+import { clearTokensAndUser } from '../utils/tokenUtils';
 const { Header, Content } = Layout;
 
 function MainPage() {
-const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
-const navigate = useNavigate();
-const { accessToken } = useUserStore();
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
+    const onUploadBillClose = useCallback(() => {
+        setIsModalOpen(false);
+    }, []);
 
-const onUploadBillClose = useCallback(() => {
-setIsModalOpen(false);
-}, []);
+    const showUploadBillModal = useCallback(() => {
+        setIsModalOpen(true);
+    },[])
 
-const showUploadBillModal = () => {
-setIsModalOpen(true);
-};
+    const handleCloseMapModal = useCallback(() => {
+        setIsMapModalOpen(false);
+    }, []);
 
-const handleCloseMapModal = useCallback(() => {
-setIsMapModalOpen(false);
-},[]);
+    const handleShowMapModal = useCallback(() => {
+        setIsMapModalOpen(true);
+    },[])
 
-const handleShowMapModal = () => {
-setIsMapModalOpen(true);
-}
+    const handleLogout = (() => {
+        clearTokensAndUser();
+    })
 
-useEffect(() => {
-    // if (!accessToken) {
-    //     navigate('/loginSignUp'); // Redirect to login if not authenticated
-    // }
-}, [accessToken, navigate]);
+    return (
+        <Layout className="app-layout">
+            <Header className="app-header">
+                <h1 className="app-title">Look Around</h1>
+                <Space>
+                    <Button type="primary" onClick={handleLogout}>Log out</Button>
+                    <Button
+                        type="primary"
+                        icon={<EnvironmentOutlined />}
+                        onClick={handleShowMapModal}
+                    />
+                    <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        onClick={showUploadBillModal}
+                    />
+                </Space>
+            </Header>
 
-return (
-<Layout className="app-layout">
-    <Header className="app-header">
-    <h1 className="app-title">Look Around</h1>
-    <div>
-        <Button 
-        type="primary" 
-        icon={<EnvironmentOutlined />} 
-        onClick={handleShowMapModal} 
-        style={{ marginRight: '10px' }}>
-        </Button>
-        <Button 
-        type="primary" 
-        icon={<UploadOutlined />} 
-        onClick={showUploadBillModal}>
-        </Button>
-    </div>
-    </Header>
+            <Content className="app-content">
+                <MainBoard />
+            </Content>
 
-    <Content className="app-content">
-    <MainBoard/>
-    </Content>
-
-    <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
-    <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
-</Layout>
-);
+            <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
+            <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
+        </Layout>
+    );
 }
 
 export default MainPage;

@@ -1,7 +1,7 @@
 import { AimOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Input } from 'antd';
 import React, { useState } from 'react';
-import { axiosClient } from '../../api/axiosClient';
+import { axiosClient } from '../../api/axios/axiosClient';
 
 interface AddressAutoCompleteProps {
 address: string;

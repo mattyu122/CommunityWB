@@ -1,7 +1,7 @@
 import { UserConfirmContactDto } from '../../dto/userAccount/UserConfirmContactDto';
 import { UserSignInDto } from '../../dto/userAccount/UserSignInDto';
 import { UserSignUpDto } from '../../dto/userAccount/userSignUpDto';
-import { axiosClient } from '../axiosClient';
+import { axiosClient } from '../axios/axiosClient';
 
 
 export const signUpUser = async (dto: UserSignUpDto) => {

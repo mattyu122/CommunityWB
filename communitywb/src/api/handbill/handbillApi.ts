@@ -1,6 +1,6 @@
 import { LatLng } from 'leaflet';
 import { GetHandBillPageDto } from '../../dto/handbill/getHandBillPageDto';
-import { axiosClient, axiosClientMultipart } from '../axiosClient';
+import { axiosClient, axiosClientMultipart } from '../axios/axiosClient';
 interface HandbillPagesQueryParams {
     location: LatLng;
     radius: number;

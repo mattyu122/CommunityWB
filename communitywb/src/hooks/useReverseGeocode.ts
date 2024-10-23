@@ -1,5 +1,5 @@
 import { LatLng } from 'leaflet';
-import { axiosClient } from '../api/axiosClient';
+import { axiosClient } from '../api/axios/axiosClient';
 
 export const useReverseGeocode = () => {
 
