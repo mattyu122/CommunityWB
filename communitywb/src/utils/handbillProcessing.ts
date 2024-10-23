@@ -7,28 +7,21 @@ export const processHandBills = (currentBoardList: Board[], handBills: HandBill[
         console.error("Invalid inputs passed to processHandBills. Expected arrays.");
         return [];
     }
+    if (handBills.length === 0) {
+        return currentBoardList;
+    }
     let updatedBoardList = [...currentBoardList];
-    const existingHandBillIds = new Set<string>();
-
-    // Collect all existing handbill IDs
-    updatedBoardList.forEach(board => {
-        board.handbills.forEach(handBill => {
-            existingHandBillIds.add(handBill.id);
-        });
-    });
 
     handBills.forEach(handBill => {
-        if (!existingHandBillIds.has(handBill.id)) {
             const result = addHandBillToBoards(updatedBoardList, handBill);
             updatedBoardList = result.boardList;
-            existingHandBillIds.add(handBill.id); // Update the set with the new handbill ID
-        }
+
     });
 
     return updatedBoardList;
 };
 
-export const addHandBillToBoards = (boardList: Board[], handBill: HandBill): { boardList: Board[] } => {
+const addHandBillToBoards = (boardList: Board[], handBill: HandBill): { boardList: Board[] } => {
     for (let i = 0; i < boardList.length; i++) {
         const board = boardList[i];
         const result = addHandBillToBoard(board, handBill);

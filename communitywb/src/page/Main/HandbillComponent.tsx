@@ -1,5 +1,5 @@
-import styles from '../css/HandBill.module.css';
-import { HandBill } from '../models/HandBill';
+import styles from '../../css/HandBill.module.css';
+import { HandBill } from '../../models/HandBill';
 
 interface HandBillProps {
     handBill: HandBill;

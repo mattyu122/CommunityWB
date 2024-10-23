@@ -5,8 +5,8 @@ import { setupInterceptors } from './api/axios/axiosInterceptor';
 import './App.css'; // Import the external CSS file
 import { useNavigation } from './hooks/useNavigation';
 import ConfirmContact from './page/ConfirmContact';
-import LoginSignUpPage from './page/LoginSignUp';
-import MainPage from './page/Main';
+import LoginSignUpPage from './page/LoginSignUp/LoginSignUp';
+import MainPage from './page/Main/Main';
 import { useUserStore } from './stores/userStateStore';
 function App() {
   const { navigateToLogin } = useNavigation();

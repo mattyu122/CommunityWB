@@ -1,11 +1,11 @@
 import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Layout, Space } from 'antd';
 import { useCallback, useState } from 'react';
-import '../App.css'; // Import the external CSS file
-import LocationMapModal from '../component/LocationMapModal';
-import MainBoard from '../component/MainBoard';
-import UploadBillModal from '../component/UploadBillModal/UploadBillModal';
-import { clearTokensAndUser } from '../utils/tokenUtils';
+import '../../App.css'; // Import the external CSS file
+import { clearTokensAndUser } from '../../utils/tokenUtils';
+import LocationMapModal from './LocationMapModal';
+import MainBoard from './MainBoard';
+import UploadBillModal from './UploadBillModal/UploadBillModal';
 const { Header, Content } = Layout;
 
 function MainPage() {

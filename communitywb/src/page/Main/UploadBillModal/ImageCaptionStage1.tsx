@@ -1,7 +1,7 @@
 import { Form, Input, Upload } from 'antd'; // Ant Design imports
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import styles from '../../css/ImageCaptionStage1.module.css';
+import styles from '../../../css/ImageCaptionStage1.module.css';
 
 interface Stage1Props {
 file: File | null;

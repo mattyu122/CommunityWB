@@ -4,13 +4,13 @@ import markerIconPng from 'leaflet/dist/images/marker-icon.png';
 import markerShadowPng from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import React, { useEffect } from 'react';
-import styles from '../../css/LocationStage2.module.css';
-import { useCurrentLocation } from '../../hooks/useCurrentLocation';
-import { useReverseGeocode } from '../../hooks/useReverseGeocode';
-import AddressAutoComplete from '../Map/AddressAutoComplete';
-import MapCenter from '../Map/MapCenter';
-import MapComponent from '../Map/MapComponent';
-import MapReadyHandler from '../Map/MapReadyHandler';
+import AddressAutoComplete from '../../../component/Map/AddressAutoComplete';
+import MapCenter from '../../../component/Map/MapCenter';
+import MapComponent from '../../../component/Map/MapComponent';
+import MapReadyHandler from '../../../component/Map/MapReadyHandler';
+import styles from '../../../css/LocationStage2.module.css';
+import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
+import { useReverseGeocode } from '../../../hooks/useReverseGeocode';
 
 // Fix missing marker icons
 const DefaultIcon = L.icon({

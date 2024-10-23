@@ -2,9 +2,9 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import { LatLng } from 'leaflet';
 import { useEffect, useState } from 'react';
-import { useAddHandBillMutation } from '../../api/handbill/handBillQuery';
-import styles from '../../css/UploadModal.module.css';
-import { AddHandBillDTO, AddHandBillForm } from '../../dto/handbill/addHandBillDto';
+import { useAddHandBillMutation } from '../../../api/handbill/handBillQuery';
+import styles from '../../../css/UploadModal.module.css';
+import { AddHandBillDTO, AddHandBillForm } from '../../../dto/handbill/addHandBillDto';
 import ImageCaptionStage1 from './ImageCaptionStage1';
 import LocationStage2 from './LocationStage2';
 

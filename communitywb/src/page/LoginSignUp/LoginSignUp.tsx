@@ -1,7 +1,7 @@
 // src/pages/LoginSignUpPage.tsx
 import { useState } from 'react';
-import Login from '../component/Login';
-import SignUp from '../component/SignUp';
+import Login from './Login';
+import SignUp from './SignUp';
 
 const LoginSignUpPage = () => {
 const [isLogin, setIsLogin] = useState(true);

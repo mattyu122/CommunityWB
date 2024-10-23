@@ -18,7 +18,6 @@ export const getHandBillPages = async ({
         if (!location?.lat || !location?.lng) {
             throw new Error('Invalid location coordinates provided.');
         }
-
         const { data } = await axiosClient.get('/handbill/handbillpage', {
             params: {
                 page,
@@ -28,7 +27,6 @@ export const getHandBillPages = async ({
                 radius,
             },
         });
-        console.log('Handbill pages fetched:', data);
         const handBillPage :GetHandBillPageDto = data;
         return handBillPage;
     } catch (error) {

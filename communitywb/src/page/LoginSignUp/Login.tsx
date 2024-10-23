@@ -2,10 +2,10 @@
 import { Button, Form, Input, notification, Typography } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSignInMutation } from '../api/UserAccount/userAccountQuery';
-import styles from '../css/LoginPage.module.css';
-import { UserSignInDto } from '../dto/userAccount/UserSignInDto';
-import { useUserStore } from '../stores/userStateStore';
+import { useSignInMutation } from '../../api/UserAccount/userAccountQuery';
+import styles from '../../css/LoginPage.module.css';
+import { UserSignInDto } from '../../dto/userAccount/UserSignInDto';
+import { useUserStore } from '../../stores/userStateStore';
 
 const { Title, Link, Text } = Typography;
 

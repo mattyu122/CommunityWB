@@ -3,14 +3,14 @@ import { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css'; // Ensure CSS is loaded
 import React, { useEffect, useState } from 'react';
 import { Circle } from 'react-leaflet';
-import styles from '../css/LocationMap.module.css';
-import { useCurrentLocation } from '../hooks/useCurrentLocation';
-import { useReverseGeocode } from '../hooks/useReverseGeocode';
-import { useLocationStore } from '../stores/locationStore';
-import AddressAutoComplete from './Map/AddressAutoComplete';
-import MapCenter from './Map/MapCenter';
-import MapComponent from './Map/MapComponent';
-import MapReadyHandler from './Map/MapReadyHandler';
+import AddressAutoComplete from '../../component/Map/AddressAutoComplete';
+import MapCenter from '../../component/Map/MapCenter';
+import MapComponent from '../../component/Map/MapComponent';
+import MapReadyHandler from '../../component/Map/MapReadyHandler';
+import styles from '../../css/LocationMap.module.css';
+import { useCurrentLocation } from '../../hooks/useCurrentLocation';
+import { useReverseGeocode } from '../../hooks/useReverseGeocode';
+import { useLocationStore } from '../../stores/locationStore';
     interface LocationMapProps {
         isOpen: boolean;
         onClose: () => void;
