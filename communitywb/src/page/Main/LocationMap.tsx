@@ -1,7 +1,7 @@
-import { Button, Modal, Slider } from 'antd';
+import { Button, Slider } from 'antd';
 import { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css'; // Ensure CSS is loaded
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Circle } from 'react-leaflet';
 import AddressAutoComplete from '../../component/Map/AddressAutoComplete';
 import MapCenter from '../../component/Map/MapCenter';
@@ -11,12 +11,12 @@ import styles from '../../css/LocationMap.module.css';
 import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 import { useReverseGeocode } from '../../hooks/useReverseGeocode';
 import { useLocationStore } from '../../stores/locationStore';
-    interface LocationMapProps {
-        isOpen: boolean;
-        onClose: () => void;
-    }
+    // interface LocationMapProps {
+    //     isOpen: boolean;
+    //     onClose: () => void;
+    // }
     
-    const LocationMapModal: React.FC<LocationMapProps> = ({ isOpen, onClose}) => {
+    const LocationMap = () => {
     const [address, setAddress] = useState<string>('');
     const { fetchReverseGeocode } = useReverseGeocode();
     const { getCurrentLocation } = useCurrentLocation();
@@ -56,18 +56,18 @@ import { useLocationStore } from '../../stores/locationStore';
             setLocation(modalLocation?? new LatLng(0,0));
         }
         setRadius(modalRadius);
-        onClose();
+        // onClose();
     }
     
 
     return (
-        <Modal
-        title="Set Location and Radius"
-        open={isOpen}
-        onCancel={onClose}
-        footer={null}
-        width="60vw"
-        >
+        // <Modal
+        // title="Set Location and Radius"
+        // open={isOpen}
+        // onCancel={onClose}
+        // footer={null}
+        // width="60vw"
+        // >
             <div className={styles.container}>
                 <AddressAutoComplete
                     address={address}
@@ -76,11 +76,13 @@ import { useLocationStore } from '../../stores/locationStore';
                     onUseCurrentLocation={() => getCurrentLocation().then(setModalLocation)}
                 />
                 {modalLocation && (
-                    <MapComponent location={modalLocation} setLocation={setModalLocation} radius={modalRadius}>
-                        <MapCenter location={modalLocation} zoom={13} />
-                        <MapReadyHandler isOpen={isOpen} />
-                        <Circle center={modalLocation} radius={modalRadius} color="blue" fillColor="blue" fillOpacity={0.2} />
-                    </MapComponent>
+                    <div style={{height: '100%'}}>
+                        <MapComponent location={modalLocation} setLocation={setModalLocation} radius={modalRadius}>
+                            <MapCenter location={modalLocation} zoom={13} />
+                            <MapReadyHandler isOpen={true} />
+                            <Circle center={modalLocation} radius={modalRadius} color="blue" fillColor="blue" fillOpacity={0.2} />
+                        </MapComponent>
+                    </div>
                 )}
                 <Slider min={100} max={5000} value={modalRadius} onChange={setModalRadius} />
                 <label >Radius: {modalRadius} meters</label>
@@ -88,8 +90,8 @@ import { useLocationStore } from '../../stores/locationStore';
                     Set Location
                 </Button>
             </div>
-        </Modal>
+        // </Modal>
     )
     };
 
-    export default LocationMapModal;
+    export default LocationMap;

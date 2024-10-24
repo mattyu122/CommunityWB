@@ -1,16 +1,15 @@
-import { EnvironmentOutlined, UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { Button, Layout, Space } from 'antd';
 import { useCallback, useState } from 'react';
 import '../../App.css'; // Import the external CSS file
 import { clearTokensAndUser } from '../../utils/tokenUtils';
-import LocationMapModal from './LocationMapModal';
 import MainBoard from './MainBoard';
 import UploadBillModal from './UploadBillModal/UploadBillModal';
 const { Header, Content } = Layout;
 
 function MainPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
+    // const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
     const onUploadBillClose = useCallback(() => {
         setIsModalOpen(false);
     }, []);
@@ -19,13 +18,13 @@ function MainPage() {
         setIsModalOpen(true);
     },[])
 
-    const handleCloseMapModal = useCallback(() => {
-        setIsMapModalOpen(false);
-    }, []);
+    // const handleCloseMapModal = useCallback(() => {
+    //     setIsMapModalOpen(false);
+    // }, []);
 
-    const handleShowMapModal = useCallback(() => {
-        setIsMapModalOpen(true);
-    },[])
+    // const handleShowMapModal = useCallback(() => {
+    //     setIsMapModalOpen(true);
+    // },[])
 
     const handleLogout = (() => {
         clearTokensAndUser();
@@ -37,11 +36,11 @@ function MainPage() {
                 <h1 className="app-title">Look Around</h1>
                 <Space>
                     <Button type="primary" onClick={handleLogout}>Log out</Button>
-                    <Button
+                    {/* <Button
                         type="primary"
                         icon={<EnvironmentOutlined />}
                         onClick={handleShowMapModal}
-                    />
+                    /> */}
                     <Button
                         type="primary"
                         icon={<UploadOutlined />}
@@ -55,7 +54,7 @@ function MainPage() {
             </Content>
 
             <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
-            <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} />
+            {/* <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} /> */}
         </Layout>
     );
 }

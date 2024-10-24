@@ -2,7 +2,7 @@ import { Board } from "../models/Board";
 import { HandBill } from "../models/HandBill";
 import { Node } from "../models/Node";
 
-export const processHandBills = (currentBoardList: Board[], handBills: HandBill[]): Board[] => {
+export const processHandBills = (currentBoardList: Board[], handBills: HandBill[], maxWidth: number, maxHeight: number): Board[] => {
     if (!Array.isArray(currentBoardList) || !Array.isArray(handBills)) {
         console.error("Invalid inputs passed to processHandBills. Expected arrays.");
         return [];
@@ -13,7 +13,7 @@ export const processHandBills = (currentBoardList: Board[], handBills: HandBill[
     let updatedBoardList = [...currentBoardList];
 
     handBills.forEach(handBill => {
-            const result = addHandBillToBoards(updatedBoardList, handBill);
+            const result = addHandBillToBoards(updatedBoardList, handBill, maxWidth, maxHeight);
             updatedBoardList = result.boardList;
 
     });
@@ -21,7 +21,7 @@ export const processHandBills = (currentBoardList: Board[], handBills: HandBill[
     return updatedBoardList;
 };
 
-const addHandBillToBoards = (boardList: Board[], handBill: HandBill): { boardList: Board[] } => {
+const addHandBillToBoards = (boardList: Board[], handBill: HandBill, maxWidth: number, maxHeight: number): { boardList: Board[] } => {
     for (let i = 0; i < boardList.length; i++) {
         const board = boardList[i];
         const result = addHandBillToBoard(board, handBill);
@@ -34,7 +34,7 @@ const addHandBillToBoards = (boardList: Board[], handBill: HandBill): { boardLis
     }
 
     // If not added to existing boards, create a new board
-    const newBoard = createNewBoardWithHandBill(handBill);
+    const newBoard = createNewBoardWithHandBill(handBill, maxWidth, maxHeight);
     return { boardList: [...boardList, newBoard] };
 };
 
@@ -118,9 +118,8 @@ function splitNode(node: Node, width: number, height: number): Node {
     return updatedNode;
 }
 
-export const createNewBoardWithHandBill = (handBill: HandBill): Board => {
-    const maxWidth = window.innerWidth;
-    const maxHeight = window.innerHeight;
+export const createNewBoardWithHandBill = (handBill: HandBill, maxWidth: number, maxHeight:number): Board => {
+
     const rootNode: Node = {
         right: null,
         down: null,

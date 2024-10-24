@@ -1,32 +1,41 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import styles from '../../css/HandBillLayer.module.css';
 import { Board } from '../../models/Board';
 import { HandBill } from '../../models/HandBill';
 import { processHandBills } from '../../utils/handbillProcessing';
 import HandBillComponent from './HandbillComponent';
-
 interface HandbillLayerProps {
     handBills: HandBill[];
     boardListRef: React.MutableRefObject<Board[]>;
 }
 
 const HandbillLayer: React.FC<HandbillLayerProps> = ({ handBills, boardListRef }) => {
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        // Generate newBoardList based on the new handBills
-        const newBoardList = processHandBills(boardListRef.current, handBills);
+    useLayoutEffect(() => {
+    // Generate newBoardList based on the new handBills
+    if (containerRef.current) {
+        console.log('containerRef.current', containerRef.current.clientWidth, containerRef.current.clientHeight);
+        const newBoardList = processHandBills(
+            boardListRef.current,
+            handBills,
+            containerRef.current.clientWidth,
+            containerRef.current.clientHeight
+        );
         boardListRef.current = newBoardList;
+    }
     }, [handBills]);
 
     const onHandBillClick = useCallback((handBill: HandBill) => {
         console.log('Handbill clicked:', handBill);
     }, []);
     return (
-        <div>
+        <div ref={containerRef} style={{ height: '100%', width: '100%', overflow: 'auto' }}>
             {boardListRef.current.map((board, boardIndex) => (
                 <div
                     key={boardIndex}
-                    className="photo-display"
+                    className={styles.photoDisplay}
                     style={{ width: board.maxWidth, height: board.maxHeight }}
                 >
                     <AnimatePresence>

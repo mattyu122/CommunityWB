@@ -1,0 +1,24 @@
+.mainContainer {
+    display: grid;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.whiteboard {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+
+.locationMapContainer {
+    width: 25vw;
+}
+
+.handbillContainer {
+    flex: 1; 
+    overflow-y: auto; 
+    height: calc(100vh - 70px); /* Adjust this to match the header height */
+    width: 75vw;
+}

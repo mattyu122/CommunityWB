@@ -1,12 +1,13 @@
-import { Spin } from 'antd';
+import { Divider, Spin } from 'antd';
 import { LatLng } from 'leaflet';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHandbillPagesQuery } from '../../api/handbill/handBillQuery';
-import styles from '../../css/Whiteboard.module.css';
+import styles from '../../css/MainBoard.module.css';
 import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 import { Board } from '../../models/Board';
 import { useLocationStore } from '../../stores/locationStore';
 import HandbillLayer from './HandbillLayer';
+import LocationMap from './LocationMap';
 
 const MainBoard = () => {
     const [page, setPage] = useState(-1);
@@ -71,10 +72,16 @@ const MainBoard = () => {
                 </div>
             ) : (
                 <div className={styles.whiteboard}>
-                    <HandbillLayer
-                        handBills={data ? data.handBills : []}
-                        boardListRef={boardListRef}
-                    />
+                    <div className={styles.locationMapContainer}>
+                        <LocationMap />
+                    </div>
+                    <Divider type="vertical" style={{height: '100%'}} />
+                    <div className={styles.handbillContainer}>
+                        <HandbillLayer
+                            handBills={data ? data.handBills : []}
+                            boardListRef={boardListRef}
+                        />
+                    </div>
                 </div>
             )}
         </div>

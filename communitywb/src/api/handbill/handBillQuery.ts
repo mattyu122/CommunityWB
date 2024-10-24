@@ -17,7 +17,7 @@ export const useHandbillPagesQuery = ({ location, radius, page = 0, size = 20, e
         queryFn: () => getHandBillPages({ location, radius, page, size }),
         placeholderData: keepPreviousData, // prevent UI flickering(state jumping between loading and done loading)
         enabled: enabled,
-        // staleTime: Infinity,
+        staleTime: 0,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,

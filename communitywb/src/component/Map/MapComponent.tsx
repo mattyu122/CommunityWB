@@ -11,7 +11,7 @@ interface MapComponentProps {
 
 const MapComponent: React.FC<MapComponentProps> = ({ location, radius, setLocation, children }) => {
     return (
-        <MapContainer center={location} zoom={13} style={{ height: '550px' }}>
+        <MapContainer center={location} zoom={13} style={{ height: '100%' }}>
             <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"

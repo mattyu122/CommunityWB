@@ -30,8 +30,8 @@
 }
 
 .previewImage {
-    width: 100%;
-    height: auto;
+    width: 50vh;
+    height: 50vh;
     object-fit: cover;
     border-radius: 8px;
     transition: filter 0.3s ease-in-out; /* Smooth transition for darkening effect */
@@ -67,4 +67,8 @@
 .caption {
     font-size: 16px;
     margin-bottom: 8px;
+}
+
+.form {
+    width: 100%;
 }

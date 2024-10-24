@@ -1,0 +1,6 @@
+.photoDisplay {
+    display: flex;
+    flex-wrap: wrap; /* Allow handbills to wrap onto multiple lines */
+    width: 100%; 
+    position: relative; /* Ensure it works with absolute handbills if needed */
+}

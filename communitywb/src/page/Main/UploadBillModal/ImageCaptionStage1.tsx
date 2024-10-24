@@ -1,4 +1,4 @@
-import { Form, Input, Upload } from 'antd'; // Ant Design imports
+import { Button, Form, Input, Upload } from 'antd'; // Ant Design imports
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import styles from '../../../css/ImageCaptionStage1.module.css';
@@ -32,39 +32,49 @@ if (file) {
 return false; // Prevent automatic upload behavior of Ant Design Upload component
 };
 
+const clearFile = () => {
+    setFile(null);
+    setImagePreview(null);
+};
+
 return (
 <div className={styles.card}>
     <div className={styles.left}>
         {imagePreview ? (
             <img src={imagePreview} alt="Preview" className={styles.previewImage} />
-        ) : (<Upload
-            beforeUpload={handleFileChange}
-            showUploadList={false} // Hide default file list
-            className={styles.uploadWrapper}
+        ) : (
+            <Upload
+                beforeUpload={handleFileChange}
+                showUploadList={false} // Hide default file list
+                className={styles.uploadWrapper}
             >
-            <img
-            src="https://placehold.co/400x400/cccccc/ffffff?text=Choose+a+picture"
-            alt="Default placeholder"
-            className={styles.previewImage}
-            />
-            </Upload>)}
+                <img
+                    src="https://placehold.co/400x400/cccccc/ffffff?text=Choose+a+picture"
+                    alt="Default placeholder"
+                    className={styles.previewImage}
+                />
+            </Upload>
+        )}
+        <Button onClick={clearFile} className={styles.clearButton}>
+            Clear File
+        </Button>
     </div>
 
     <div className={styles.right}>
-    <Form layout="vertical" className={styles.form}>
-        <Form.Item
-        label="Caption"
-        validateStatus={errors.caption ? 'error' : ''}
-        help={errors.caption ? 'Caption is required' : ''}
-        >
-        <Input.TextArea
-            {...register('caption', { required: true })}
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Enter caption"
-        />
-        </Form.Item>
-    </Form>
+        <Form layout="vertical" className={styles.form}>
+            <Form.Item
+            label="Caption"
+            validateStatus={errors.caption ? 'error' : ''}
+            help={errors.caption ? 'Caption is required' : ''}
+            >
+            <Input.TextArea
+                {...register('caption', { required: true })}
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Enter caption"
+            />
+            </Form.Item>
+        </Form>
     </div>
 </div>
 );

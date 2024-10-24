@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAddHandBillMutation } from '../../../api/handbill/handBillQuery';
 import styles from '../../../css/UploadModal.module.css';
 import { AddHandBillDTO, AddHandBillForm } from '../../../dto/handbill/addHandBillDto';
+import { useUserStore } from '../../../stores/userStateStore';
 import ImageCaptionStage1 from './ImageCaptionStage1';
 import LocationStage2 from './LocationStage2';
 
@@ -31,7 +32,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
   const [imagePreview, setImagePreview] = useState<string | null>(initialState.imagePreview);
   const [currentStage, setCurrentStage] = useState<number>(initialState.currentStage);
   const { mutate: addHandBill, isSuccess } = useAddHandBillMutation();
-
+  const { user } = useUserStore();
   // Reset form function
   const resetForm = () => {
     setFile(initialState.file);
@@ -96,6 +97,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
         height: 150,
         location: location, 
         address: address,
+        userId: user?.id || 0,
       };
       const formData = AddHandBillForm.toFormData(newHandBill);
       addHandBill(formData);
@@ -137,6 +139,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
         footer={null} // Remove default footer buttons
         closable={false} // Hide default close button
         width="60vw"
+        style={{height: '80vh'}}
       >
         <div className={styles.cardWrapper}>
           {stages[currentStage].component}

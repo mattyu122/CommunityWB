@@ -7,6 +7,7 @@ export interface AddHandBillDTO {
     height: number;
     location: LatLng | null;
     address: string;
+    userId: number;
 }
 
 export class AddHandBillForm {
@@ -18,7 +19,7 @@ export class AddHandBillForm {
         formData.append('width', handBill.width.toString());
         formData.append('height', handBill.height.toString());
         formData.append('address', handBill.address);
-
+        formData.append('userId', handBill.userId.toString());
         if (handBill.location) {
         formData.append('location.lat', handBill.location.lat.toString());
         formData.append('location.lng', handBill.location.lng.toString());
