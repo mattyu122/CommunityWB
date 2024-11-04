@@ -1,21 +1,22 @@
 import { Divider, Spin } from 'antd';
 import { LatLng } from 'leaflet';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHandbillPagesQuery } from '../../api/handbill/handBillQuery';
 import styles from '../../css/MainBoard.module.css';
 import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 import { Board } from '../../models/Board';
 import { useLocationStore } from '../../stores/locationStore';
+import { processHandBills } from '../../utils/handbillProcessing';
 import HandbillLayer from './HandbillLayer';
 import LocationMap from './LocationMap';
 
 const MainBoard = () => {
     const [page, setPage] = useState(-1);
     const boardListRef = useRef<Board[]>([]);
+    const [hoveredHandBillId, setHoveredHandBillId] = useState<string | null>(null);
 
     const { getCurrentLocation } = useCurrentLocation();
     const { location, radius, setLocation } = useLocationStore();
-
     const { data, isPending } = useHandbillPagesQuery({
         location: location ?? new LatLng(0, 0),
         radius,
@@ -36,7 +37,6 @@ const MainBoard = () => {
             setPage(0);
         }
         boardListRef.current = [];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location, radius]);
 
     useEffect(() => {
@@ -50,18 +50,31 @@ const MainBoard = () => {
         }
     }, [data]);
 
-    useEffect(() => {
-        return () => {
-            console.log('unmounting');
-        }
-    }, []);
-
     const fetchNextPageWithDelay = async () => {
         if (data && page < data.totalPages) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setPage((prevPage) => prevPage + 1);
         }
     };
+
+    useEffect(() => {
+        const container = document.querySelector(`.${styles.handbillContainer}`);
+        console.log('handBills', data?.handBills);
+        if (container && data && data.handBills && data.handBills.length > 0) {
+            const newBoardList = processHandBills(
+                boardListRef.current,
+                data.handBills,
+                container.clientWidth,
+                container.clientHeight
+            );
+            boardListRef.current = newBoardList;
+        }
+    }, [data]);
+
+    const onHandBillHover = useCallback((handBillId: string | null) => {
+        setHoveredHandBillId(handBillId);
+    }, []);
+
 
 
     return (
@@ -73,13 +86,13 @@ const MainBoard = () => {
             ) : (
                 <div className={styles.whiteboard}>
                     <div className={styles.locationMapContainer}>
-                        <LocationMap />
+                        <LocationMap boardListRef={boardListRef} hoveredHandBillId={hoveredHandBillId}/>
                     </div>
                     <Divider type="vertical" style={{height: '100%'}} />
                     <div className={styles.handbillContainer}>
                         <HandbillLayer
-                            handBills={data ? data.handBills : []}
-                            boardListRef={boardListRef}
+                            boardList={boardListRef.current}
+                            onHandBillHover={onHandBillHover}
                         />
                     </div>
                 </div>

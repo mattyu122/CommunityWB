@@ -4,3 +4,11 @@
     height: 100%;
     gap: 10px;
 }
+
+.markerIcon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.markerIcon:hover {
+    transform: scale(1.5); /* Adjust scale as needed */
+}

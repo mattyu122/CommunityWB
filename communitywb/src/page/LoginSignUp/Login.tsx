@@ -30,13 +30,17 @@ const Login = ({ toggleToSignUp }: { toggleToSignUp: () => void }) => {
                 setUser(user);
                 notification.success({
                     message: 'Sign In Successful',
-                    description: "going to home page",
+                    description: "Getting handbills around you...",
                 });
                 navigate('/'); // Navigate to the main page
 
             },
-            onError: (error) => {
+            onError: (error: any) => {
                 console.log('sign in error', error);
+                notification.error({
+                    message: 'Sign In Failed',
+                    description: error.response.data.message,
+                });
             }
         });
     };

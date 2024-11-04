@@ -19,9 +19,7 @@ export const setupInterceptors = (client: AxiosInstance, navigateToLogin: () => 
         (response) => response,
         async (error) => {
             const originalRequest = error.config;
-            console.log('Response error:', error);
-
-            if (error.response.status === 401 && !originalRequest._retry) {
+            if (error.response.status === 410 && !originalRequest._retry) {
                 originalRequest._retry = true;
                 try {
                     const newAccessToken = await refreshAccessToken();

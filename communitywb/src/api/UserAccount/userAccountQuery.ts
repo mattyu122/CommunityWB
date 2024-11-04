@@ -4,10 +4,8 @@ export const useSignUpMutation = () => {
     return useMutation({
         mutationFn: (formData: any) => signUpUser(formData),
         onSuccess: () => {
-            console.log('sign up success');
         },
         onError: (error) => {
-            console.log('sign up error', error);
         }
     })
 }
@@ -17,7 +15,7 @@ export const useSignInMutation = () => {
         mutationFn: (formData: any) => signInUser(formData),
         onSuccess: () => {
         },
-        onError: (error) => {
+        onError: () => {
         }
     })
 }
@@ -26,10 +24,8 @@ export const useConfirmContactMutation = () => {
     return useMutation({
         mutationFn: (formData: any) => confirmContact(formData),
         onSuccess: () => {
-            console.log('confirm contact success');
         },
         onError: (error) => {
-            console.log('confirm contact error', error);
         }
     })
 }

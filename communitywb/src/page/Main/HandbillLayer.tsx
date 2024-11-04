@@ -1,38 +1,35 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import styles from '../../css/HandBillLayer.module.css';
 import { Board } from '../../models/Board';
 import { HandBill } from '../../models/HandBill';
-import { processHandBills } from '../../utils/handbillProcessing';
 import HandBillComponent from './HandbillComponent';
+import HandbillModal from './HandbillModal';
+
 interface HandbillLayerProps {
-    handBills: HandBill[];
-    boardListRef: React.MutableRefObject<Board[]>;
+    boardList: Board[]; // Directly passed from MainBoard
+    onHandBillHover: (handBillId: string | null) => void;
 }
 
-const HandbillLayer: React.FC<HandbillLayerProps> = ({ handBills, boardListRef }) => {
+const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHover }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
 
-    useLayoutEffect(() => {
-    // Generate newBoardList based on the new handBills
-    if (containerRef.current) {
-        console.log('containerRef.current', containerRef.current.clientWidth, containerRef.current.clientHeight);
-        const newBoardList = processHandBills(
-            boardListRef.current,
-            handBills,
-            containerRef.current.clientWidth,
-            containerRef.current.clientHeight
-        );
-        boardListRef.current = newBoardList;
-    }
-    }, [handBills]);
-
-    const onHandBillClick = useCallback((handBill: HandBill) => {
-        console.log('Handbill clicked:', handBill);
+    const onHandBillClickHandle = useCallback((handBill: HandBill) => {
+        setSelectedHandBill(handBill);
+        setIsModalVisible(true);
     }, []);
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setSelectedHandBill(null);
+    };
+
+
     return (
         <div ref={containerRef} style={{ height: '100%', width: '100%', overflow: 'auto' }}>
-            {boardListRef.current.map((board, boardIndex) => (
+            {boardList.map((board, boardIndex) => (
                 <div
                     key={boardIndex}
                     className={styles.photoDisplay}
@@ -48,19 +45,26 @@ const HandbillLayer: React.FC<HandbillLayerProps> = ({ handBills, boardListRef }
                                 transition={{ duration: 0.5 }}
                                 style={{
                                     position: 'absolute',
-                                    width: `${handBill.width + 10}px`,
-                                    height: `${handBill.height + 10}px`,
+                                    width: `${handBill.width}px`,
+                                    height: `${handBill.height}px`,
                                 }}
+                                onMouseEnter={() => onHandBillHover(handBill.id)}
+                                onMouseLeave={() => onHandBillHover(null)}
                             >
                                 <HandBillComponent
                                     handBill={handBill}
-                                    onClickHandBillHandler={onHandBillClick}
+                                    onClickHandBillHandler={onHandBillClickHandle}
                                 />
                             </motion.div>
                         ))}
                     </AnimatePresence>
                 </div>
             ))}
+            {/* Modal for displaying handbill details and canvas */}
+            <HandbillModal
+                isModalVisible={isModalVisible}
+                closeModal={closeModal}
+                selectedHandBill={selectedHandBill}/>
         </div>
     );
 };

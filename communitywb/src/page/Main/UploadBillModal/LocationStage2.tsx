@@ -55,7 +55,7 @@ const LocationStage2: React.FC<Stage2Props> = ({ location, address, setLocation,
         {location && (
         <div className={styles.card}>
             <div className={styles.map}>
-                <MapComponent location={location} radius={1000} setLocation={setLocation}>
+                <MapComponent location={location} setLocation={setLocation}>
                     <MapReadyHandler isOpen={true} />
                     <MapCenter location={location} zoom={13} />
                 </MapComponent>
@@ -65,7 +65,7 @@ const LocationStage2: React.FC<Stage2Props> = ({ location, address, setLocation,
                     address={address}
                     setAddress={setAddress}
                     setLocation={(position) => {
-                    const newLocation = new LatLng(position.lat, position.lon);
+                    const newLocation = new LatLng(position.lat, position.lng);
                     setLocation(newLocation);
                     }}
                     onUseCurrentLocation={handleSetCurrentLocation}

@@ -6,7 +6,7 @@ import { axiosClient } from '../../api/axios/axiosClient';
 interface AddressAutoCompleteProps {
 address: string;
 setAddress: (address: string) => void;
-setLocation: (position: { lat: number; lon: number }) => void;
+setLocation: (position: { lat: number; lng: number }) => void;
 onUseCurrentLocation?: () => void;
 }
 
@@ -47,7 +47,7 @@ const AddressAutoComplete: React.FC<AddressAutoCompleteProps> = ({
 
     const handleSuggestionSelect = (value: string, option: any) => {
         setAddress(value);
-        setLocation({ lat: parseFloat(option.lat), lon: parseFloat(option.lon) });
+        setLocation({ lat: parseFloat(option.lat), lng: parseFloat(option.lon) });
     };
 
     return (

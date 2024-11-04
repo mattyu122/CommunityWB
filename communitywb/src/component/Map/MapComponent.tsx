@@ -4,12 +4,12 @@ import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 
 interface MapComponentProps {
     location: LatLng;
-    radius: number;
     setLocation: (location: LatLng) => void;
     children: React.ReactNode;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ location, radius, setLocation, children }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ location, setLocation, children }) => {
+    // console.log('MapComponent rerender');
     return (
         <MapContainer center={location} zoom={13} style={{ height: '100%' }}>
             <TileLayer
