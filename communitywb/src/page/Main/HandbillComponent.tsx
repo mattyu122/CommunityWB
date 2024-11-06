@@ -10,12 +10,16 @@ const HandBillComponent = ({ handBill, onClickHandBillHandler }: HandBillProps) 
 
     return (
         <div onClick={() => onClickHandBillHandler(handBill)}>
-            <img
-                src={handBill.imageUrl}
-                alt={`Caption: ${handBill.caption}`}
-                className={styles.handbillimage}
-                style={{ width: handBill.width, height: handBill.height }}
-            />
+            {
+                handBill.handbillMedia.length > 0 &&
+                <img
+                    src={handBill.handbillMedia[0].mediaUrl}
+                    alt={`Caption: ${handBill.caption}`}
+                    className={styles.handbillimage}
+                    style={{ width: handBill.width, height: handBill.height }}
+                />
+            }
+
         </div>
     );
 };

@@ -1,6 +1,7 @@
-import { Button, Form, Input, notification, Typography } from 'antd';
+import { Form, Input, notification, Typography } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useConfirmContactMutation } from '../api/UserAccount/userAccountQuery';
+import LinkButton from '../component/Button/LinkButton';
 import styles from '../css/ConfirmEmailPage.module.css';
 import { UserConfirmContactDto } from '../dto/userAccount/UserConfirmContactDto';
 import { useUserStore } from '../stores/userStateStore';
@@ -61,9 +62,9 @@ const ConfirmContact = () => {
                         <Input placeholder="Confirmation Code" />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" className={styles.submitButton}>
+                        <LinkButton type="primary" htmlType="submit" className={styles.submitButton}>
                             Confirm
-                        </Button>
+                        </LinkButton>
                     </Form.Item>
                 </Form>
             </div>

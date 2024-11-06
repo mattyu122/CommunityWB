@@ -78,7 +78,7 @@ const Login = ({ toggleToSignUp }: { toggleToSignUp: () => void }) => {
             </Form.Item>
 
             <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button htmlType="submit" block>
                 Log In
             </Button>
             </Form.Item>

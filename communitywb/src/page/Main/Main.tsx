@@ -1,7 +1,8 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Layout, Space } from 'antd';
+import { Layout, Space } from 'antd';
 import { useCallback, useState } from 'react';
 import '../../App.css'; // Import the external CSS file
+import TextButton from '../../component/Button/TextButton';
 import { clearTokensAndUser } from '../../utils/tokenUtils';
 import MainBoard from './MainBoard';
 import UploadBillModal from './UploadBillModal/UploadBillModal';
@@ -9,7 +10,6 @@ const { Header, Content } = Layout;
 
 function MainPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    // const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
     const onUploadBillClose = useCallback(() => {
         setIsModalOpen(false);
     }, []);
@@ -17,14 +17,6 @@ function MainPage() {
     const showUploadBillModal = useCallback(() => {
         setIsModalOpen(true);
     },[])
-
-    // const handleCloseMapModal = useCallback(() => {
-    //     setIsMapModalOpen(false);
-    // }, []);
-
-    // const handleShowMapModal = useCallback(() => {
-    //     setIsMapModalOpen(true);
-    // },[])
 
     const handleLogout = (() => {
         clearTokensAndUser();
@@ -35,14 +27,9 @@ function MainPage() {
             <Header className="app-header">
                 <h1 className="app-title">Look Around</h1>
                 <Space>
-                    <Button type="primary" onClick={handleLogout}>Log out</Button>
-                    {/* <Button
-                        type="primary"
-                        icon={<EnvironmentOutlined />}
-                        onClick={handleShowMapModal}
-                    /> */}
-                    <Button
-                        type="primary"
+                    <TextButton onClick={handleLogout}>Log out</TextButton>
+
+                    <TextButton
                         icon={<UploadOutlined />}
                         onClick={showUploadBillModal}
                     />
@@ -54,7 +41,6 @@ function MainPage() {
             </Content>
 
             <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
-            {/* <LocationMapModal isOpen={isMapModalOpen} onClose={handleCloseMapModal} /> */}
         </Layout>
     );
 }

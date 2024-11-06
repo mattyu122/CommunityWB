@@ -1,4 +1,5 @@
-import { Input, Modal } from "antd";
+import { UserOutlined } from "@ant-design/icons"; // Import the default user icon
+import { List, Modal } from "antd";
 import { useState } from "react";
 import { HandBill } from "../../models/HandBill";
 
@@ -10,7 +11,7 @@ interface HandbillModalProps {
 
 const HandbillModal = ({ isModalVisible, closeModal, selectedHandBill }: HandbillModalProps) => {
     const [text, setText] = useState<string>('');
-
+    // const [comments, setComments] = useState<string[]>([]);
     return (
         <Modal
             open={isModalVisible}
@@ -25,46 +26,72 @@ const HandbillModal = ({ isModalVisible, closeModal, selectedHandBill }: Handbil
         >
             {selectedHandBill && (
                 <div style={{ display: 'flex', height: '100%' }}>
-                    {/* Left side - Picture/Video */}
-                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-                        {/* Example for displaying image or video */}
-                        {selectedHandBill.imageUrl ? (
-                            <img 
-                                src={selectedHandBill.imageUrl} 
-                                alt={selectedHandBill.caption} 
-                                style={{ maxWidth: '100%', maxHeight: '100%' }} 
+                    {/* Left side - Media List */}
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        {selectedHandBill.handbillMedia && selectedHandBill.handbillMedia.length > 0 ? (
+                            <List
+                                dataSource={selectedHandBill.handbillMedia}
+                                renderItem={(media) => (
+                                    <List.Item key={media.id}>
+                                        {media.mediaType === "VIDEO" ? (
+                                            <video
+                                                src={media.mediaUrl}
+                                                controls
+                                                style={{ maxWidth: '100%', maxHeight: '100%' }}
+                                            />
+                                        ) : (
+                                            <img
+                                                src={media.mediaUrl}
+                                                alt={`Media ${media.id}`}
+                                                style={{ maxWidth: '100%', maxHeight: '100%' }}
+                                            />
+                                        )}
+                                    </List.Item>
+                                )}
                             />
-                        ): null}
+                        ) : (
+                            <p>No media available</p>
+                        )}
                     </div>
 
                     {/* Right side - Comment Section */}
                     <div style={{ flex: 1, padding: '20px', overflowY: 'auto', backgroundColor: '#fff' }}>
-                        <h2>{selectedHandBill.caption}</h2>
-                        <div style={{ marginBottom: '20px' }}>
-                            <Input
-                                placeholder="Enter text to stick on canvas"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                                style={{ width: '100%' }}
-                            />
+                        {/* User info */}
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            {/* User Icon with fallback to UserOutlined */}
+                            {selectedHandBill.user?.imageUrl ? (
+                                <img 
+                                    src={selectedHandBill.user.imageUrl} 
+                                    alt={`${selectedHandBill.user.fullname}'s icon`} 
+                                    style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }} 
+                                />
+                            ) : (
+                                <UserOutlined style={{ fontSize: '40px', marginRight: '10px' }} /> // AntD default user icon
+                            )}
+                            {/* User Fullname */}
+                            <h3 style={{ margin: 0 }}>{selectedHandBill.user?.fullname || "Unknown User"}</h3>
                         </div>
+
+                        {/* Handbill caption */}
+                        <div>
+                            <h2>{selectedHandBill.caption}</h2>
+                        </div>
+
                         {/* Comment Section */}
                         <div>
                             <h3>Comments</h3>
-                            {/* Example comments */}
                             <div style={{ marginBottom: '10px' }}>
                                 <p><strong>User1:</strong> Amazing handbill!</p>
                             </div>
                             <div style={{ marginBottom: '10px' }}>
                                 <p><strong>User2:</strong> I love the design!</p>
                             </div>
-                            {/* Add more comments as needed */}
                         </div>
                     </div>
                 </div>
             )}
         </Modal>
-    )
-}
+    );
+};
 
 export default HandbillModal;

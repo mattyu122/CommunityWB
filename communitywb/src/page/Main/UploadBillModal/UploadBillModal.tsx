@@ -1,8 +1,9 @@
-import { CloseOutlined } from '@ant-design/icons';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
+import { RcFile } from 'antd/es/upload/interface';
 import { LatLng } from 'leaflet';
 import { useEffect, useState } from 'react';
 import { useAddHandBillMutation } from '../../../api/handbill/handBillQuery';
+import LinkButton from '../../../component/Button/LinkButton';
 import styles from '../../../css/UploadModal.module.css';
 import { AddHandBillDTO, AddHandBillForm } from '../../../dto/handbill/addHandBillDto';
 import { useUserStore } from '../../../stores/userStateStore';
@@ -16,22 +17,22 @@ interface UploadBillModalProps {
 
 // Define initial state
 const initialState = {
-  file: null as File | null,
+  file: [] as RcFile[] | null,
   caption: '',
   location: new LatLng(40.7128, -74.0060),
   address: '',
-  imagePreview: null as string | null,
+  imagePreview: [] as string[] | null,
   currentStage: 0
 };
 
 const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) => {
-  const [file, setFile] = useState<File | null>(initialState.file);
+  const [file, setFile] = useState<RcFile [] | null>(initialState.file);
   const [caption, setCaption] = useState<string>(initialState.caption);
   const [location, setLocation] = useState<LatLng | null>(initialState.location);
   const [address, setAddress] = useState<string>(initialState.address);
-  const [imagePreview, setImagePreview] = useState<string | null>(initialState.imagePreview);
+  const [imagePreview, setImagePreview] = useState<string[] | null>(initialState.imagePreview);
   const [currentStage, setCurrentStage] = useState<number>(initialState.currentStage);
-  const { mutate: addHandBill, isSuccess } = useAddHandBillMutation();
+  const { mutate: addHandBill, isSuccess, isPending } = useAddHandBillMutation();
   const { user } = useUserStore();
   // Reset form function
   const resetForm = () => {
@@ -100,6 +101,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
         userId: user?.id || 0,
       };
       const formData = AddHandBillForm.toFormData(newHandBill);
+      console.log('Submitting form data:', formData);
       addHandBill(formData);
     } else {
       alert('Please fill out all fields.');
@@ -108,30 +110,24 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
 
   const modalTitle = (
     <div className={styles.modalTitleWrapper}>
-      <Button onClick={handleBack} disabled={currentStage === 0}>
+      <LinkButton onClick={handleBack} disabled={currentStage === 0}>
         Back
-      </Button>
+      </LinkButton>
       <div className={styles.titleCenter}>{stages[currentStage].title}</div>
       {currentStage < stages.length - 1 ? (
-        <Button type="primary" onClick={handleNext}>
+        <LinkButton onClick={handleNext}>
           Next
-        </Button>
+        </LinkButton>
       ) : (
-        <Button type="primary" onClick={submit}>
+        <LinkButton loading={isPending} onClick={submit}>
           Submit
-        </Button>
+        </LinkButton>
       )}
     </div>
   );
 
   return (
     <>
-      {isOpen && (
-        <CloseOutlined 
-          className={styles.closeButton} // Use the grand close button class
-          onClick={onClose}
-          />
-      )}
       <Modal
         title={modalTitle}
         open={isOpen}

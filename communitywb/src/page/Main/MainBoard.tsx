@@ -32,7 +32,6 @@ const MainBoard = () => {
     };
 
     useEffect(() => {
-        console.log('location or radius changed', location, radius);
         if (page !== 0) {
             setPage(0);
         }
@@ -40,7 +39,6 @@ const MainBoard = () => {
     }, [location, radius]);
 
     useEffect(() => {
-        console.log('fetching current location');
         fetchCurrentLocation();
     }, []);
 
@@ -59,7 +57,6 @@ const MainBoard = () => {
 
     useEffect(() => {
         const container = document.querySelector(`.${styles.handbillContainer}`);
-        console.log('handBills', data?.handBills);
         if (container && data && data.handBills && data.handBills.length > 0) {
             const newBoardList = processHandBills(
                 boardListRef.current,
