@@ -36,20 +36,19 @@ import { useLocationStore } from '../../stores/locationStore';
     const [address, setAddress] = useState<string>('');
     const { fetchReverseGeocode } = useReverseGeocode();
     const { getCurrentLocation } = useCurrentLocation();
-    const { currentLocation, location,setLocation, setRadius } = useLocationStore();
-    const [modalRadius, setModalRadius] = useState<number>(500);
+    const { currentLocation, location, radius,setLocation, setRadius } = useLocationStore();
+    const [modalRadius, setModalRadius] = useState<number>(radius);
     const [modalLocation, setModalLocation] = useState<LatLng | null>(currentLocation);
-    // Memoize isSameLocation function with no dependencies
-    const isSameLocation = useCallback((loc1: LatLng, loc2: LatLng, epsilon = 1e-5) => {
-    return (
-        Math.abs(loc1.lat - loc2.lat) < epsilon &&
-        Math.abs(loc1.lng - loc2.lng) < epsilon
-    );
-    }, []);
+
 
     // Memoize the zero location to avoid recreating it
     const zeroLatLng = useMemo(() => new LatLng(0, 0), []);
     useEffect(() => {
+        const handleSetCurrentLocation = async () => {
+            const currentLoc = await getCurrentLocation();
+            setModalLocation(currentLoc);
+
+        }
         handleSetCurrentLocation();
     }, []);
 
@@ -64,20 +63,12 @@ import { useLocationStore } from '../../stores/locationStore';
         fetchReverseGeoCodeFun();
     }, [modalLocation]);
 
-    const handleSetCurrentLocation = async () => {
-        const currentLoc = await getCurrentLocation();
-        setModalLocation(currentLoc);
-    };
-
 
 
     // Memoize handleOnClickSetLocation function
     const handleOnClickSetLocation = useCallback(() => {
-    if (!isSameLocation(modalLocation ?? zeroLatLng, location ?? zeroLatLng)) {
-        console.log('Coordinates have changed. Updating location.');
         setLocation(modalLocation ?? zeroLatLng);
-    }
-    setRadius(modalRadius);
+        setRadius(modalRadius);
     }, [modalLocation, location, modalRadius]);
     
     // Memoize functions passed as props to child components

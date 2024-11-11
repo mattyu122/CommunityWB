@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styles from '../../css/HandBillLayer.module.css';
 import { Board } from '../../models/Board';
 import { HandBill } from '../../models/HandBill';
@@ -12,7 +12,6 @@ interface HandbillLayerProps {
 }
 
 const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHover }) => {
-    const containerRef = useRef<HTMLDivElement | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
 
@@ -28,7 +27,7 @@ const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHove
 
 
     return (
-        <div ref={containerRef} style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+        <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
             {boardList.map((board, boardIndex) => (
                 <div
                     key={boardIndex}

@@ -1,0 +1,37 @@
+.carouselContainer {
+    width: 50vw;
+    height: 70vh;
+    position: relative;
+}
+
+.carouselItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img{
+    width:50vw;
+    height:70vh;
+    object-fit: contain;
+}
+
+
+.arrow {
+    position: absolute;
+    background-color: rgba(234, 233, 233, 0.5);
+    top: 50%;
+    opacity: 0.6;
+    border-radius: 100%;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1; /* Ensure arrows are above the image */
+}
+
+.leftArrow {
+    left: 10px;
+}
+
+.rightArrow {
+    right: 10px;
+}

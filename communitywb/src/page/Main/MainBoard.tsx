@@ -11,7 +11,7 @@ import HandbillLayer from './HandbillLayer';
 import LocationMap from './LocationMap';
 
 const MainBoard = () => {
-    const [page, setPage] = useState(-1);
+    const [page, setPage] = useState(0);
     const boardListRef = useRef<Board[]>([]);
     const [hoveredHandBillId, setHoveredHandBillId] = useState<string | null>(null);
 
@@ -32,10 +32,9 @@ const MainBoard = () => {
     };
 
     useEffect(() => {
-        if (page !== 0) {
-            setPage(0);
-        }
+        setPage(0);
         boardListRef.current = [];
+        console.log('Page', page);
     }, [location, radius]);
 
     useEffect(() => {
@@ -72,8 +71,6 @@ const MainBoard = () => {
         setHoveredHandBillId(handBillId);
     }, []);
 
-
-
     return (
         <div className={styles.mainContainer}>
             {isPending ? (
@@ -84,6 +81,7 @@ const MainBoard = () => {
                 <div className={styles.whiteboard}>
                     <div className={styles.locationMapContainer}>
                         <LocationMap boardListRef={boardListRef} hoveredHandBillId={hoveredHandBillId}/>
+
                     </div>
                     <Divider type="vertical" style={{height: '100%'}} />
                     <div className={styles.handbillContainer}>

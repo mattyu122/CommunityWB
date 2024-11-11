@@ -1,6 +1,8 @@
-import { UserOutlined } from "@ant-design/icons"; // Import the default user icon
-import { List, Modal } from "antd";
-import { useState } from "react";
+import { LeftOutlined, RightOutlined, UserOutlined } from "@ant-design/icons";
+import { Carousel, Modal } from "antd";
+import { useRef, useState } from "react";
+import LinkButton from "../../component/Button/LinkButton";
+import styles from "../../css/HandbillModal.module.css";
 import { HandBill } from "../../models/HandBill";
 
 interface HandbillModalProps {
@@ -10,8 +12,23 @@ interface HandbillModalProps {
 }
 
 const HandbillModal = ({ isModalVisible, closeModal, selectedHandBill }: HandbillModalProps) => {
-    const [text, setText] = useState<string>('');
-    // const [comments, setComments] = useState<string[]>([]);
+    const carouselRef = useRef<any>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handleAfterChange = (index: number) => {
+        setCurrentIndex(index);
+    };
+
+    const goToNext = () => {
+        carouselRef.current?.next();
+    };
+
+    const goToPrevious = () => {
+        carouselRef.current?.prev();
+    };
+
+    const mediaLength = selectedHandBill?.handbillMedia.length || 0;
+
     return (
         <Modal
             open={isModalVisible}
@@ -26,29 +43,49 @@ const HandbillModal = ({ isModalVisible, closeModal, selectedHandBill }: Handbil
         >
             {selectedHandBill && (
                 <div style={{ display: 'flex', height: '100%' }}>
-                    {/* Left side - Media List */}
+                    {/* Left side - Carousel for swipeable media */}
                     <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        {selectedHandBill.handbillMedia && selectedHandBill.handbillMedia.length > 0 ? (
-                            <List
-                                dataSource={selectedHandBill.handbillMedia}
-                                renderItem={(media) => (
-                                    <List.Item key={media.id}>
-                                        {media.mediaType === "VIDEO" ? (
-                                            <video
-                                                src={media.mediaUrl}
-                                                controls
-                                                style={{ maxWidth: '100%', maxHeight: '100%' }}
-                                            />
-                                        ) : (
-                                            <img
-                                                src={media.mediaUrl}
-                                                alt={`Media ${media.id}`}
-                                                style={{ maxWidth: '100%', maxHeight: '100%' }}
-                                            />
-                                        )}
-                                    </List.Item>
+                        {mediaLength > 0 ? (
+                            <div className={styles.carouselContainer}>
+                                {/* Left Arrow Button */}
+                                {currentIndex > 0 && (
+                                    <LinkButton
+                                        className={`${styles.arrow} ${styles.leftArrow}`}
+                                        icon={<LeftOutlined />}
+                                        onClick={goToPrevious}
+                                    />
                                 )}
-                            />
+
+                                {/* Carousel */}
+                                <Carousel ref={carouselRef} infinite={false} afterChange={handleAfterChange}>
+                                    {selectedHandBill.handbillMedia.map((media, index) => (
+                                        <div key={index} className={styles.carouselItem}>
+                                            {media.mediaType === 'VIDEO' ? (
+                                                <video
+                                                    src={media.mediaUrl}
+                                                    controls
+                                                    style={{ maxWidth: '100%', maxHeight: '100%' }}
+                                                />
+                                            ) : (
+                                                <img
+                                                    className={styles.img}
+                                                    src={media.mediaUrl}
+                                                    alt={`Media ${index}`}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </Carousel>
+
+                                {/* Right Arrow Button */}
+                                {currentIndex < mediaLength - 1 && (
+                                    <LinkButton
+                                        className={`${styles.arrow} ${styles.rightArrow}`}
+                                        icon={<RightOutlined />}
+                                        onClick={goToNext}
+                                    />
+                                )}
+                            </div>
                         ) : (
                             <p>No media available</p>
                         )}
@@ -58,17 +95,15 @@ const HandbillModal = ({ isModalVisible, closeModal, selectedHandBill }: Handbil
                     <div style={{ flex: 1, padding: '20px', overflowY: 'auto', backgroundColor: '#fff' }}>
                         {/* User info */}
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                            {/* User Icon with fallback to UserOutlined */}
                             {selectedHandBill.user?.imageUrl ? (
-                                <img 
-                                    src={selectedHandBill.user.imageUrl} 
-                                    alt={`${selectedHandBill.user.fullname}'s icon`} 
-                                    style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }} 
+                                <img
+                                    src={selectedHandBill.user.imageUrl}
+                                    alt={`${selectedHandBill.user.fullname}'s icon`}
+                                    style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
                                 />
                             ) : (
-                                <UserOutlined style={{ fontSize: '40px', marginRight: '10px' }} /> // AntD default user icon
+                                <UserOutlined style={{ fontSize: '40px', marginRight: '10px' }} />
                             )}
-                            {/* User Fullname */}
                             <h3 style={{ margin: 0 }}>{selectedHandBill.user?.fullname || "Unknown User"}</h3>
                         </div>
 

@@ -1,26 +1,43 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Layout, Space } from 'antd';
+import { Layout, Modal, Space } from 'antd'; // Import Modal from Ant Design
 import { useCallback, useState } from 'react';
 import '../../App.css'; // Import the external CSS file
 import TextButton from '../../component/Button/TextButton';
 import { clearTokensAndUser } from '../../utils/tokenUtils';
 import MainBoard from './MainBoard';
 import UploadBillModal from './UploadBillModal/UploadBillModal';
+
 const { Header, Content } = Layout;
 
 function MainPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const onUploadBillClose = useCallback(() => {
-        setIsModalOpen(false);
+
+    const onUploadBillClose = useCallback((finishedUpload: boolean) => {
+        if (finishedUpload) {
+            // Close the modal
+            setIsModalOpen(false);
+        } else {
+            // Show confirmation dialog
+            Modal.confirm({
+                title: 'Discard Upload?',
+                content: 'Are you sure you want to discard your upload? Your progress will be lost.',
+                okText: 'Yes, Discard',
+                cancelText: 'Cancel',
+                onOk: () => {
+                    // User confirmed, close the modal
+                    setIsModalOpen(false);
+                },
+            });
+        }
     }, []);
 
     const showUploadBillModal = useCallback(() => {
         setIsModalOpen(true);
-    },[])
+    }, []);
 
-    const handleLogout = (() => {
+    const handleLogout = () => {
         clearTokensAndUser();
-    })
+    };
 
     return (
         <Layout className="app-layout">
@@ -28,7 +45,6 @@ function MainPage() {
                 <h1 className="app-title">Look Around</h1>
                 <Space>
                     <TextButton onClick={handleLogout}>Log out</TextButton>
-
                     <TextButton
                         icon={<UploadOutlined />}
                         onClick={showUploadBillModal}

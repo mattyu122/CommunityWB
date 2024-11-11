@@ -1,4 +1,5 @@
-import L, { LatLng } from 'leaflet';
+// src/components/LocationStage2.tsx
+import L from 'leaflet';
 import markerIconRetinaPng from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIconPng from 'leaflet/dist/images/marker-icon.png';
 import markerShadowPng from 'leaflet/dist/images/marker-shadow.png';
@@ -11,65 +12,58 @@ import MapReadyHandler from '../../../component/Map/MapReadyHandler';
 import styles from '../../../css/LocationStage2.module.css';
 import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
 import { useReverseGeocode } from '../../../hooks/useReverseGeocode';
+import { useUploadBillStore } from '../../../stores/createHandBillFormStore';
 
 // Fix missing marker icons
 const DefaultIcon = L.icon({
-iconUrl: markerIconPng,
-iconRetinaUrl: markerIconRetinaPng,
-shadowUrl: markerShadowPng,
-iconSize: [25, 41],
-iconAnchor: [12, 41],
+    iconUrl: markerIconPng,
+    iconRetinaUrl: markerIconRetinaPng,
+    shadowUrl: markerShadowPng,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-interface Stage2Props {
-    location: LatLng | null;
-    address: string;
-    setAddress: (address: string) => void;
-    setLocation: (position: LatLng) => void;
-}
-
-const LocationStage2: React.FC<Stage2Props> = ({ location, address, setLocation, setAddress }) => {
+const LocationStage2: React.FC = () => {
+    const { location, setLocation, address, setAddress } = useUploadBillStore();
     const { getCurrentLocation } = useCurrentLocation();
     const { fetchReverseGeocode } = useReverseGeocode();
-
 
     const handleSetCurrentLocation = async () => {
         const currentLoc = await getCurrentLocation();
         setLocation(currentLoc);
     };
 
-
-    useEffect(()=>{
-        const fetchReverseGeoCodeFun = async ()=>{
-            if (location) {
-                const tmpAddress = await fetchReverseGeocode(location);
-                setAddress(tmpAddress);
-            }
+    useEffect(() => {
+    const fetchReverseGeoCodeFun = async () => {
+        if (location) {
+        const tmpAddress = await fetchReverseGeocode(location);
+        setAddress(tmpAddress);
         }
-        fetchReverseGeoCodeFun();
-    }, [location])
-    
+    };
+    fetchReverseGeoCodeFun();
+    }, [location]);
+
     return (
     <div className={styles.container}>
         {location && (
         <div className={styles.card}>
             <div className={styles.map}>
-                <MapComponent location={location} setLocation={setLocation}>
-                    <MapReadyHandler isOpen={true} />
-                    <MapCenter location={location} zoom={13} />
-                </MapComponent>
+            <MapComponent location={location} setLocation={setLocation}>
+                <MapReadyHandler isOpen={true} />
+                <MapCenter location={location} zoom={13} />
+            </MapComponent>
             </div>
             <div className={styles.mapControl}>
-                <AddressAutoComplete
-                    address={address}
-                    setAddress={setAddress}
-                    setLocation={(position) => {
-                    const newLocation = new LatLng(position.lat, position.lng);
-                    setLocation(newLocation);
-                    }}
-                    onUseCurrentLocation={handleSetCurrentLocation}
-                />
+            <AddressAutoComplete
+                address={address}
+                setAddress={setAddress}
+                setLocation={(position) => {
+                const newLocation = L.latLng(position.lat, position.lng);
+                setLocation(newLocation);
+                }}
+                onUseCurrentLocation={handleSetCurrentLocation}
+            />
             </div>
         </div>
         )}
@@ -77,4 +71,4 @@ const LocationStage2: React.FC<Stage2Props> = ({ location, address, setLocation,
     );
 };
 
-export default LocationStage2;
+export default React.memo(LocationStage2);

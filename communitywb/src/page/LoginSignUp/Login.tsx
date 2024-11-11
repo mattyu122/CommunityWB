@@ -16,7 +16,6 @@ const Login = ({ toggleToSignUp }: { toggleToSignUp: () => void }) => {
     const { setTokens, setUser } = useUserStore();
     const { mutate: signIn } = useSignInMutation();
     const handleLogin = (values: any) => {
-        console.log('Login attempted with:', values);
         const { identifier, password } = values;
         const signInData: UserSignInDto = {
             identifier,
@@ -84,8 +83,8 @@ const Login = ({ toggleToSignUp }: { toggleToSignUp: () => void }) => {
             </Form.Item>
 
             <div className={styles.signupContainer}>
-            <Text>Don't have an account? </Text>
-            <Link onClick={toggleToSignUp}>Sign Up</Link>
+                <Text>Don't have an account? </Text>
+                <Link onClick={toggleToSignUp}>Sign Up</Link>
             </div>
         </Form>
         </div>

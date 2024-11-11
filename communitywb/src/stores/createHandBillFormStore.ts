@@ -1,33 +1,43 @@
+// src/stores/uploadBillStore.ts
+import { RcFile } from 'antd/es/upload/interface';
 import { LatLng } from 'leaflet';
 import { create } from 'zustand';
+interface UploadBillState {
+file: RcFile[] | null;
+caption: string;
+location: LatLng | null;
+address: string;
+imagePreview: string[] | null;
+currentStage: number;
+setFile: (file: RcFile[] | null) => void;
+setCaption: (caption: string) => void;
+setLocation: (location: LatLng | null) => void;
+setAddress: (address: string) => void;
+setImagePreview: (preview: string[] | null) => void;
+setCurrentStage: (stage: number) => void;
+resetForm: () => void;
+}
 
-// Zustand store for managing global state
-const useCreateHandBillFormStore = create((set) => ({
-    file: null as File | null,
+export const useUploadBillStore = create<UploadBillState>((set) => ({
+file: null,
+caption: '',
+location: new LatLng(40.7128, -74.0060),
+address: '',
+imagePreview: null,
+currentStage: 0,
+setFile: (file) => set({ file }),
+setCaption: (caption) => set({ caption }),
+setLocation: (location) => set({ location }),
+setAddress: (address) => set({ address }),
+setImagePreview: (imagePreview) => set({ imagePreview }),
+setCurrentStage: (currentStage) => set({ currentStage }),
+resetForm: () =>
+set({
+    file: null,
     caption: '',
     location: new LatLng(40.7128, -74.0060),
     address: '',
-    imagePreview: null as string | null,
+    imagePreview: null,
     currentStage: 0,
-
-    // Actions to update state
-    setFile: (file: File | null) => set({ file }),
-    setCaption: (caption: string) => set({ caption }),
-    setLocation: (location: LatLng) => set({ location }),
-    setAddress: (address: string) => set({ address }),
-    setImagePreview: (imagePreview: string | null) => set({ imagePreview }),
-    setCurrentStage: (currentStage: number) => set({ currentStage }),
-
-    // Reset to initial state
-    resetForm: () => set({
-            file: null,
-            caption: '',
-            location: new LatLng(40.7128, -74.0060), // Default to NYC
-            address: '',
-            imagePreview: null,
-            currentStage: 0,
-        }),
-
+}),
 }));
-
-export default useCreateHandBillFormStore;
