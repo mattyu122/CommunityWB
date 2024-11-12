@@ -15,7 +15,7 @@ import { Board } from '../../models/Board';
 import { useLocationStore } from '../../stores/locationStore';
     interface LocationMapProps {
         boardListRef: React.MutableRefObject<Board[]>;
-        hoveredHandBillId: string | null;
+        hoveredHandBillId: number | null;
     }
     const customIcon = L.icon({
         iconUrl: '/handbillMapIcon.png', // URL to the image in public directory

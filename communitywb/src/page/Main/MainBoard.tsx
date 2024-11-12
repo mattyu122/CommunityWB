@@ -13,7 +13,7 @@ import LocationMap from './LocationMap';
 const MainBoard = () => {
     const [page, setPage] = useState(0);
     const boardListRef = useRef<Board[]>([]);
-    const [hoveredHandBillId, setHoveredHandBillId] = useState<string | null>(null);
+    const [hoveredHandBillId, setHoveredHandBillId] = useState<number | null>(null);
 
     const { getCurrentLocation } = useCurrentLocation();
     const { location, radius, setLocation } = useLocationStore();
@@ -21,7 +21,7 @@ const MainBoard = () => {
         location: location ?? new LatLng(0, 0),
         radius,
         page,
-        enabled: location !== null && page !== -1,
+        enabled: location !== null,
     });
 
     const fetchCurrentLocation = async () => {
@@ -67,7 +67,7 @@ const MainBoard = () => {
         }
     }, [data]);
 
-    const onHandBillHover = useCallback((handBillId: string | null) => {
+    const onHandBillHover = useCallback((handBillId: number | null) => {
         setHoveredHandBillId(handBillId);
     }, []);
 

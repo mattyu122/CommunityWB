@@ -3,7 +3,7 @@ import { HandBillMedia } from "./HandBillMedia";
 import { User } from "./User";
 
 export interface HandBill {
-    id: string;
+    id: number;
     caption: string;
     file: File;
     location: LatLng | null;
