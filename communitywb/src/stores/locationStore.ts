@@ -11,7 +11,7 @@ interface LocationState {
 }
 
 export const useLocationStore = create<LocationState>((set) => ({
-    currentLocation: null,
+    currentLocation: new LatLng(40.7128, -74.0060), // Default location
     location: null, // Default location
     radius: 500,
     setCurrentLocation: (location: LatLng) => set({ currentLocation: location }),

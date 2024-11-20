@@ -36,6 +36,11 @@ export const getHandBillPages = async ({
 };
 
 export const addHandBill = async (formData: FormData) => {
-    const response = await axiosClientMultipart.post('/handbill/addHandBill', formData);
-    return response.data;
+    try{
+        const response = await axiosClientMultipart.post('/handbill/addHandBill', formData);
+        return response.data;
+    }catch(error){
+        console.error('Error adding handbill:', error);
+        throw new Error('Failed to add handbill.');
+    }
 }

@@ -1,0 +1,45 @@
+.carouselContainer {
+width: 100%;
+height: 100%;
+position: relative;
+}
+
+.carouselItem {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.reviewImg {
+height: 50vh;
+width: 100%;
+object-fit: contain;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.arrow {
+position: absolute;
+background-color: rgba(234, 233, 233, 0.5);
+top: 50%;
+transform: translateY(-50%);
+opacity: 1;
+border-radius: 50%;
+cursor: pointer;
+user-select: none;
+z-index: 1; /* Ensure arrows are above the image */
+padding: 10px; /* Add some padding to make the clickable area larger */
+}
+
+.leftArrow {
+left: 10px;
+}
+
+.rightArrow {
+right: 10px;
+}

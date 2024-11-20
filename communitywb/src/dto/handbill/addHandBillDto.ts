@@ -2,7 +2,7 @@ import { RcFile } from "antd/es/upload";
 import { LatLng } from "leaflet";
 
 export interface AddHandBillDTO {
-    file: RcFile[] | null;
+    mediaFiles: RcFile[] | null;
     caption: string;
     width: number;
     height: number;
@@ -16,8 +16,8 @@ export class AddHandBillForm {
         console.log("addHandBillDto", handBill);
         const formData = new FormData();
 
-        handBill.file?.forEach((file, index) => {
-            formData.append(`mediaFiles`, file);
+        handBill.mediaFiles?.forEach((mediaFiles, index) => {
+            formData.append(`mediaFiles`, mediaFiles);
         });
         formData.append('caption', handBill.caption);
         formData.append('width', handBill.width.toString());

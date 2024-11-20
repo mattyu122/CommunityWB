@@ -1,9 +1,10 @@
 import { Button, Slider } from 'antd';
-import L, { LatLng } from 'leaflet';
+import { LatLng } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Circle, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
+import { customIcon, enlargedIcon } from '../../component/Icon/HandbillIcon';
 import AddressAutoComplete from '../../component/Map/AddressAutoComplete';
 import MapCenter from '../../component/Map/MapCenter';
 import MapComponent from '../../component/Map/MapComponent';
@@ -17,19 +18,6 @@ import { useLocationStore } from '../../stores/locationStore';
         boardListRef: React.MutableRefObject<Board[]>;
         hoveredHandBillId: number | null;
     }
-    const customIcon = L.icon({
-        iconUrl: '/handbillMapIcon.png', // URL to the image in public directory
-        iconSize: [32, 32], // Adjust size as needed
-        iconAnchor: [16, 32], // Anchor so the icon points at the correct position
-        popupAnchor: [0, -32] // Adjust popup position
-    });
-
-    const enlargedIcon = L.icon({
-        iconUrl: '/handbillMapIcon.png',
-        iconSize: [48, 48], // Enlarged size for hover
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-    });
 
     const LocationMap: React.FC<LocationMapProps> = ({ boardListRef, hoveredHandBillId }) => {
     // Define the custom icon

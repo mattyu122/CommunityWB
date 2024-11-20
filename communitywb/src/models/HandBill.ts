@@ -14,5 +14,6 @@ export interface HandBill {
     handbillMedia: HandBillMedia[];
     positionX: number;
     positionY: number;
+    createdAt: string;
     toFormData?(): FormData;
 }

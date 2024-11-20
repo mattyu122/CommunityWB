@@ -1,6 +1,7 @@
 import { AimOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Input } from 'antd';
-import React, { useState } from 'react';
+import _debounce from 'lodash/debounce';
+import React, { useCallback, useState } from 'react';
 import { axiosClient } from '../../api/axios/axiosClient';
 
 interface AddressAutoCompleteProps {
@@ -20,8 +21,8 @@ const AddressAutoComplete: React.FC<AddressAutoCompleteProps> = ({
 
     const fetchAddressSuggestions = async (inputValue: string) => {
     try {
-        const { data } = await axiosClient.get('https://nominatim.openstreetmap.org/search', {
-        params: { q: inputValue, format: 'json', namedetails: 1 },
+        const { data } = await axiosClient.get('https://api.locationiq.com/v1/autocomplete', {
+        params: { q: inputValue, limit: 5 ,key: 'pk.4edbc0256c02c27c211ab930a748dc3e', dedupe:1},
         });
         setSuggestions(
         data.map(({ display_name, lat, lon }: any) => ({
@@ -36,10 +37,15 @@ const AddressAutoComplete: React.FC<AddressAutoCompleteProps> = ({
     }
     };
 
+    const debouncedFetchSuggestions = useCallback(
+        _debounce(fetchAddressSuggestions, 2000),
+        []
+    )
+
     const handleAddressChange = async (inputValue: string) => {
         setAddress(inputValue);
         if (inputValue.length > 2) {
-            await fetchAddressSuggestions(inputValue);
+            debouncedFetchSuggestions(inputValue);
         } else {
             setSuggestions([]);
         }

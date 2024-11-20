@@ -26,8 +26,9 @@ const MainBoard = () => {
 
     const fetchCurrentLocation = async () => {
         const loc = await getCurrentLocation();
-        if (loc.lat !== location?.lat || loc.lng !== location?.lng) {
+        if(loc && (loc.lat !== location?.lat || loc.lng !== location?.lng)){
             setLocation(loc);
+
         }
     };
 

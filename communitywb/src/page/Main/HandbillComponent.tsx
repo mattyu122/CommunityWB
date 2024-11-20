@@ -9,7 +9,6 @@ interface HandBillProps {
 }
 
 const HandBillComponent = ({ handBill, onClickHandBillHandler, isBrowsed }: HandBillProps) => {
-    console.log("handbill", handBill, isBrowsed);
     return (
         <div onClick={() => onClickHandBillHandler(handBill)} className={`${isBrowsed ? styles.browsedDiv: ''}`}>
             {

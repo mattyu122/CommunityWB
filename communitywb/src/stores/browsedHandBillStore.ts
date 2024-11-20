@@ -1,53 +1,51 @@
 import { create } from 'zustand';
 
 interface BrowsedHandbillEntry {
-    id: number;
-    timestamp: number;
+  id: number;
+  timestamp: number;
+  lastSeenPage: number;
+  scrollPosition: number;
 }
 
 interface BrowsedHandbillsState {
-    browsedHandbills: BrowsedHandbillEntry[];
-    addBrowsedHandbill: (id: number) => void;
+  browsedHandbills: BrowsedHandbillEntry[];
+  addBrowsedHandbill: (id: number, lastSeenPage: number, scrollPosition: number) => void;
+  getBrowsedHandbillEntry: (id: number) => BrowsedHandbillEntry | undefined;
 }
 
-export const useBrowsedHandbillsStore = create<BrowsedHandbillsState>((set) => {
-  // Define the expiry duration (e.g., 7 days)
-  const EXPIRY_DURATION = 3 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+export const useBrowsedHandbillsStore = create<BrowsedHandbillsState>((set, get) => {
+  const EXPIRY_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
 
   // Load and clean up initial data from localStorage
-    const storedData = localStorage.getItem('browsedHandbills');
-    let initialBrowsedHandbills: BrowsedHandbillEntry[] = storedData ? JSON.parse(storedData) : [];
+  const storedData = localStorage.getItem('browsedHandbills');
+  let initialBrowsedHandbills: BrowsedHandbillEntry[] = storedData ? JSON.parse(storedData) : [];
 
-  // Clean up expired entries on initialization
-    const now = Date.now();
-    initialBrowsedHandbills = initialBrowsedHandbills.filter(
+  const now = Date.now();
+  initialBrowsedHandbills = initialBrowsedHandbills.filter(
     (entry) => now - entry.timestamp < EXPIRY_DURATION
-    );
+  );
 
-  // Update localStorage after cleanup
-    localStorage.setItem('browsedHandbills', JSON.stringify(initialBrowsedHandbills));
+  localStorage.setItem('browsedHandbills', JSON.stringify(initialBrowsedHandbills));
 
-    return {
+  return {
     browsedHandbills: initialBrowsedHandbills,
-    addBrowsedHandbill: (id) =>
-        set((state) => {
+    addBrowsedHandbill: (id, lastSeenPage, scrollPosition) =>
+      set((state) => {
         const now = Date.now();
 
-        // Clean up expired entries
         let updatedBrowsedHandbills = state.browsedHandbills.filter(
-            (entry) => now - entry.timestamp < EXPIRY_DURATION
+          (entry) => now - entry.timestamp < EXPIRY_DURATION && entry.id !== id
         );
 
-        // Remove existing entry if it exists
-        updatedBrowsedHandbills = updatedBrowsedHandbills.filter((entry) => entry.id !== id);
+        updatedBrowsedHandbills.push({ id, timestamp: now, lastSeenPage, scrollPosition });
 
-        // Add the new entry
-        updatedBrowsedHandbills.push({ id, timestamp: now });
-
-        // Update localStorage
         localStorage.setItem('browsedHandbills', JSON.stringify(updatedBrowsedHandbills));
 
         return { browsedHandbills: updatedBrowsedHandbills };
-        }),
-    };
+      }),
+    getBrowsedHandbillEntry: (id) => {
+      const state = get();
+      return state.browsedHandbills.find((entry) => entry.id === id);
+    },
+  };
 });

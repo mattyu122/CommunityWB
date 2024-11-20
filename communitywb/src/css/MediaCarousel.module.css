@@ -1,6 +1,6 @@
 .carouselContainer {
-    width: 50vw;
-    height: 70vh;
+    width: 40vw;
+    height: 100%;
     position: relative;
 }
 
@@ -11,17 +11,17 @@
 }
 
 .img{
-    width:50vw;
     height:70vh;
-    object-fit: contain;
+    width:100%;
+    object-fit:contain;
+    
 }
-
 
 .arrow {
     position: absolute;
     background-color: rgba(234, 233, 233, 0.5);
     top: 50%;
-    opacity: 0.6;
+    opacity: 1;
     border-radius: 100%;
     cursor: pointer;
     user-select: none;
@@ -34,4 +34,10 @@
 
 .rightArrow {
     right: 10px;
+}
+
+.reviewImg{
+    height: 50vh;
+    width: 50vw;
+    object-fit:contain;
 }

@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { LatLng } from 'leaflet';
 import { addHandBill, getHandBillPages } from './handbillApi';
 
@@ -17,7 +17,6 @@ export const useHandbillPagesQuery = ({ location, radius, page = 0, size = 20, e
         queryFn: () => getHandBillPages({ location, radius, page, size }),
         placeholderData: keepPreviousData, // prevent UI flickering(state jumping between loading and done loading)
         enabled: enabled,
-        staleTime: 0,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -25,11 +24,9 @@ export const useHandbillPagesQuery = ({ location, radius, page = 0, size = 20, e
 }
 
 export const useAddHandBillMutation = () =>{
-    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (formData: FormData) => addHandBill(formData),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['handbillPages']});
         },
         onError: (error)=> {
             console.log('error adding handbill', error);

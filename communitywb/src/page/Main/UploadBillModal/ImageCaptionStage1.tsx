@@ -10,6 +10,7 @@ import { useUploadBillStore } from '../../../stores/createHandBillFormStore';
 
 const ImageCaptionStage1: React.FC = () => {
     const {
+        file,
         setFile,
         caption,
         setCaption,
@@ -22,9 +23,12 @@ const ImageCaptionStage1: React.FC = () => {
     const [uploadFileList, setUploadFileList] = useState<RcFile[]>([]);
 
     const handleFileChange = (newFiles: RcFile[]) => {
-        const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+        const allFiles = [...uploadFileList, ...newFiles]
+        console.log("All Files:", allFiles);
+        const newPreviews = allFiles.map((file) => URL.createObjectURL(file));
+        setUploadFileList(allFiles);
         setImagePreview(newPreviews);
-        setFile(newFiles);
+        setFile(allFiles);
         setCurrentImageIndex(0); // Reset to the first image on file change
     };
 
@@ -48,11 +52,11 @@ const ImageCaptionStage1: React.FC = () => {
     };
 
     useEffect(() => {
-    return () => {
-        // Cleanup on unmount
-        imagePreview?.forEach((url) => URL.revokeObjectURL(url));
-    };
-    }, []);
+        if(file == null && imagePreview == null){
+            setCurrentImageIndex(0);
+            setUploadFileList([]); // Clear the Upload component's fileList
+        }
+    }, [file, imagePreview]);
 
     return (
     <div className={styles.card}>
@@ -100,11 +104,9 @@ const ImageCaptionStage1: React.FC = () => {
             fileList={uploadFileList}
             onChange={({ fileList }) => {
                 const newFiles = fileList
-                .map((file) => file.originFileObj as RcFile)
-                .filter((file): file is RcFile => !!file);
-
+                    .map((file) => file.originFileObj as RcFile)
+                    .filter((file): file is RcFile => !!file);
                 handleFileChange(newFiles);
-                setUploadFileList(fileList as RcFile[]); // Update the uploadFileList state
             }}
             >
             <LinkButton>Pick from device</LinkButton>

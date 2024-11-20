@@ -1,0 +1,13 @@
+.commentMediaContainer {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 10px;
+}
+
+.commentMedia{
+    width: 30%;
+    height: 30%;
+    object-fit: contain;
+    cursor:pointer;
+}

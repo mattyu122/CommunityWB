@@ -1,10 +1,13 @@
 // utils/axiosInterceptor.js
 import { AxiosInstance } from 'axios';
 import { clearTokensAndUser, refreshAccessToken } from '../../utils/tokenUtils';
-export const setupInterceptors = (client: AxiosInstance, navigateToLogin: () => void) => {
+export const setupInterceptors = (client: AxiosInstance) => {
     // Request Interceptor
     client.interceptors.request.use(
         (config) => {
+            if (config.url && config.url.includes('locationiq.com')) {
+                return config;
+            }
             const token = localStorage.getItem('accessToken');
             if (token) {
                 config.headers['Authorization'] = `Bearer ${token}`;

@@ -1,86 +1,75 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import React, { useCallback, useState } from 'react';
 import styles from '../../css/HandBillLayer.module.css';
 import { Board } from '../../models/Board';
 import { HandBill } from '../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../stores/browsedHandBillStore';
 import HandBillComponent from './HandbillComponent';
-import HandbillModal from './HandbillModal';
+import HandbillModal from './HandbillModal/HandbillModal';
 
 interface HandbillLayerProps {
-    boardList: Board[]; // Directly passed from MainBoard
-    onHandBillHover: (handBillId: number | null) => void;
+boardList: Board[];
+onHandBillHover: (handBillId: number | null) => void;
 }
 
 const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHover }) => {
-    boardList.forEach((board) => {
-        board.handbills.forEach((handBill) => {
-            console.log("id type", typeof(handBill.id));
-        });
-    })
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
+const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
 
-    const {browsedHandbills, addBrowsedHandbill} = useBrowsedHandbillsStore();
-
-    const onHandBillClickHandle = useCallback((handBill: HandBill) => {
-        console.log("Handbill clicked", handBill);
+const { browsedHandbills } = useBrowsedHandbillsStore();
+const onHandBillClickHandle = useCallback(
+    (handBill: HandBill) => {
         setSelectedHandBill(handBill);
-        setIsModalVisible(true);
-        addBrowsedHandbill(handBill.id);
-    }, [addBrowsedHandbill]);
+    },
+[]
+);
 
-    const closeModal = () => {
-        setIsModalVisible(false);
-        setSelectedHandBill(null);
-    };
+const closeModal = () => {
+    setSelectedHandBill(null);
+};
 
+return (
+<div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+    {boardList.map((board, boardIndex) => (
+    <div
+        key={boardIndex}
+        className={styles.photoDisplay}
+        style={{ width: board.maxWidth, height: board.maxHeight }}
+    >
+        {board.handbills.map((handBill) => {
+        const isBrowsed = browsedHandbills.some((entry) => entry.id === handBill.id);
 
-    return (
-        <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
-            {boardList.map((board, boardIndex) => (
-                <div
-                    key={boardIndex}
-                    className={styles.photoDisplay}
-                    style={{ width: board.maxWidth, height: board.maxHeight }}
-                >
-                    <AnimatePresence>
-                        {board.handbills.map((handBill) => {
-                            const isBrowsed = browsedHandbills.some((entry) => entry.id === handBill.id);
-                            
-                            return (
-                                <motion.div
-                                    key={handBill.id}
-                                    initial={{ opacity: 0, x: handBill.positionX, y: handBill.positionY }}
-                                    animate={{ opacity: 1, x: handBill.positionX, y: handBill.positionY }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.5 }}
-                                    style={{
-                                        position: 'absolute',
-                                        width: `${handBill.width}px`,
-                                        height: `${handBill.height}px`,
-                                    }}
-                                    onMouseEnter={() => onHandBillHover(handBill.id)}
-                                    onMouseLeave={() => onHandBillHover(null)}
-                                >
-                                    <HandBillComponent
-                                        handBill={handBill}
-                                        onClickHandBillHandler={onHandBillClickHandle}
-                                        isBrowsed = {isBrowsed}
-                                    />
-                                </motion.div>
-                            )}
-                        )}
-                    </AnimatePresence>
-                </div>
-            ))}
-            {/* Modal for displaying handbill details and canvas */}
-            <HandbillModal
-                isModalVisible={isModalVisible}
-                closeModal={closeModal}
-                selectedHandBill={selectedHandBill}/>
-        </div>
-    );
+        return (
+            <div
+            key={handBill.id}
+            style={{
+                position: 'absolute',
+                width: `${handBill.width}px`,
+                height: `${handBill.height}px`,
+                left: `${handBill.positionX}px`,
+                top: `${handBill.positionY}px`,
+            }}
+            onMouseEnter={() => onHandBillHover(handBill.id)}
+            onMouseLeave={() => onHandBillHover(null)}
+            >
+            <HandBillComponent
+                handBill={handBill}
+                onClickHandBillHandler={onHandBillClickHandle}
+                isBrowsed={isBrowsed}
+            />
+            </div>
+        );
+        })}
+    </div>
+    ))}
+
+    {/* Conditionally render HandbillModal */}
+    {selectedHandBill && (
+        <HandbillModal
+            closeModal={closeModal}
+            selectedHandBill={selectedHandBill}
+        />
+    )}
+</div>
+);
 };
 
 export default React.memo(HandbillLayer);

@@ -36,6 +36,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
   }, [isSuccess]);
 
   useEffect(() => {
+    console.log('isOpen:', isOpen);
     if (!isOpen) {
       resetForm(); // Reset form when modal is closed
     }
@@ -43,7 +44,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
 
   const stages = [
     {
-      component: <ImageCaptionStage1 />,
+      component: <ImageCaptionStage1/>,
       title: 'Details',
     },
     {
@@ -65,9 +66,9 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
   };
 
   const submit = async () => {
-    if (file && caption && address && location) {
+    if (caption && address && location) {
       const newHandBill: AddHandBillDTO = {
-        file: file,
+        mediaFiles: file,
         caption: caption,
         width: 300,
         height: 150,
