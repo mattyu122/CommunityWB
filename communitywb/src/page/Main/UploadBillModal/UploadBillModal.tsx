@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { useAddHandBillMutation } from '../../../api/handbill/handBillQuery';
 import LinkButton from '../../../component/Button/LinkButton';
-import styles from '../../../css/UploadModal.module.css';
+import styles from '../../../css/UploadHandBillModal/UploadModal.module.css';
 import { AddHandBillDTO, AddHandBillForm } from '../../../dto/handbill/addHandBillDto';
 import { useUploadBillStore } from '../../../stores/createHandBillFormStore';
 import { useUserStore } from '../../../stores/userStateStore';
@@ -36,7 +36,6 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
   }, [isSuccess]);
 
   useEffect(() => {
-    console.log('isOpen:', isOpen);
     if (!isOpen) {
       resetForm(); // Reset form when modal is closed
     }
@@ -77,7 +76,6 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
         userId: user?.id || 0,
       };
       const formData = AddHandBillForm.toFormData(newHandBill);
-      console.log('Submitting form data:', formData);
       addHandBill(formData);
     } else {
       alert('Please fill out all fields.');

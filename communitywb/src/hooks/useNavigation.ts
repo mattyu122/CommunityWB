@@ -1,11 +1,11 @@
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const useNavigation = () => {
+export function useNavigation() {
     const navigate = useNavigate();
-
-    const navigateToLogin = () => {
-        navigate('/loginSignUp', { replace: true }); // Replace ensures no back button to the previous page
-    };
+    const navigateToLogin = useCallback(() => {
+        navigate('/loginSignUp', { replace: true });
+    }, [navigate]);
 
     return { navigateToLogin };
-};
+}

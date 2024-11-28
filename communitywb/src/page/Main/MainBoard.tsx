@@ -1,7 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Divider, Spin } from 'antd';
-import { LatLng } from 'leaflet';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHandbillPagesQuery } from '../../api/handbill/handBillQuery';
+import { useHandbillPagesInfiniteQuery } from '../../api/handbill/handBillQuery';
 import styles from '../../css/MainBoard.module.css';
 import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 import { Board } from '../../models/Board';
@@ -11,60 +11,79 @@ import HandbillLayer from './HandbillLayer';
 import LocationMap from './LocationMap';
 
 const MainBoard = () => {
-    const [page, setPage] = useState(0);
-    const boardListRef = useRef<Board[]>([]);
+    const [boardList, setBoardList] = useState<Board[]>([]);
+    const containerRef = useRef<HTMLDivElement | null>(null); // Ref for the container
     const [hoveredHandBillId, setHoveredHandBillId] = useState<number | null>(null);
+    const processedIdsRef = useRef(new Set());
 
     const { getCurrentLocation } = useCurrentLocation();
     const { location, radius, setLocation } = useLocationStore();
-    const { data, isPending } = useHandbillPagesQuery({
-        location: location ?? new LatLng(0, 0),
+
+    const isLocationValid = location && !isNaN(location.lat) && !isNaN(location.lng);
+
+    // Store the previous location and radius
+    const prevLocationRef = useRef(location);
+    const prevRadiusRef = useRef(radius);
+    const queryClient = useQueryClient();
+    const {
+        data,
+        isFetching,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        refetch,
+    } = useHandbillPagesInfiniteQuery({
+        location,
         radius,
-        page,
-        enabled: location !== null,
+        enabled: isLocationValid,
     });
 
-    const fetchCurrentLocation = async () => {
-        const loc = await getCurrentLocation();
-        if(loc && (loc.lat !== location?.lat || loc.lng !== location?.lng)){
-            setLocation(loc);
-
-        }
-    };
-
     useEffect(() => {
-        setPage(0);
-        boardListRef.current = [];
-        console.log('Page', page);
-    }, [location, radius]);
-
-    useEffect(() => {
+        const fetchCurrentLocation = async () => {
+            const loc = await getCurrentLocation();
+            if (loc && (loc.lat !== location?.lat || loc.lng !== location?.lng)) {
+                setLocation(loc);
+                refetch();
+            }
+        };
         fetchCurrentLocation();
     }, []);
 
     useEffect(() => {
-        if (data) {
-            fetchNextPageWithDelay();
+        if ( isLocationValid &&
+            (   prevLocationRef.current?.lat !== location?.lat ||
+                prevLocationRef.current?.lng !== location?.lng ||
+                prevRadiusRef.current !== radius
+            )
+        ) {
+            processedIdsRef.current.clear();
+            setBoardList([]);
+            queryClient.removeQueries({ queryKey: ['handbillPages'] });
+            prevLocationRef.current = location;
+            prevRadiusRef.current = radius;
         }
-    }, [data]);
-
-    const fetchNextPageWithDelay = async () => {
-        if (data && page < data.totalPages) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            setPage((prevPage) => prevPage + 1);
-        }
-    };
+    }, [location,radius]);
 
     useEffect(() => {
-        const container = document.querySelector(`.${styles.handbillContainer}`);
-        if (container && data && data.handBills && data.handBills.length > 0) {
-            const newBoardList = processHandBills(
-                boardListRef.current,
-                data.handBills,
-                container.clientWidth,
-                container.clientHeight
+        if (data) {
+            const latestPage = data.pages[data.pages.length - 1];
+            const latestHandBills = latestPage.handBills;
+                // Filter out already processed handbills
+            const newHandBills = latestHandBills.filter(
+                    (handbill) => !processedIdsRef.current.has(handbill.id)
             );
-            boardListRef.current = newBoardList;
+            if (containerRef.current && newHandBills.length > 0) {
+                const container = containerRef.current;
+                const newBoardList = processHandBills(
+                        boardList,
+                        newHandBills,
+                        container.clientWidth,
+                        container.clientHeight
+                );
+                // Update the set of processed IDs
+                newHandBills.forEach((handbill) => processedIdsRef.current.add(handbill.id));
+                setBoardList(newBoardList);
+            }
         }
     }, [data]);
 
@@ -72,27 +91,57 @@ const MainBoard = () => {
         setHoveredHandBillId(handBillId);
     }, []);
 
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollTop + clientHeight >= scrollHeight - 800 && hasNextPage && !isFetchingNextPage && !isFetching) {
+            fetchNextPage();
+        }
+    };
+
+    if (!isLocationValid) {
+        return (
+            <div className={styles.loadingContainer}>
+                <Spin tip="Fetching your location..." />
+            </div>
+        );
+    }
+
     return (
         <div className={styles.mainContainer}>
-            {isPending ? (
-                <div className={styles.loadingContainer}>
-                    <Spin tip="Loading more handbills..." />
-                </div>
-            ) : (
                 <div className={styles.whiteboard}>
                     <div className={styles.locationMapContainer}>
-                        <LocationMap boardListRef={boardListRef} hoveredHandBillId={hoveredHandBillId}/>
-
-                    </div>
-                    <Divider type="vertical" style={{height: '100%'}} />
-                    <div className={styles.handbillContainer}>
-                        <HandbillLayer
-                            boardList={boardListRef.current}
-                            onHandBillHover={onHandBillHover}
+                        <LocationMap
+                            boardList={boardList}
+                            hoveredHandBillId={hoveredHandBillId}
                         />
                     </div>
+                    <Divider type="vertical" style={{ height: '100%' }} />
+                    <div
+                        className={styles.handbillContainer}
+                        ref={containerRef} // Assign the ref here
+                        onScroll={handleScroll}
+                    >
+                        
+                        {
+                            isFetching && !isFetchingNextPage ? (
+                                <div className={styles.loadingContainer}> 
+                                    <Spin tip="Getting handbills around you..." />
+                                </div>) : (
+                                    <HandbillLayer
+                                    boardList={boardList}
+                                    onHandBillHover={onHandBillHover}
+                                    />
+                                )
+                        }
+                        
+                        {isFetchingNextPage && (
+                            <div className={styles.loadingMoreContainer}>
+                                <Spin tip="Loading more handbills..." />
+                            </div>
+                        )}
+                    </div>
                 </div>
-            )}
+            
         </div>
     );
 };

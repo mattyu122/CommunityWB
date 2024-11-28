@@ -13,7 +13,6 @@ export interface AddHandBillDTO {
 
 export class AddHandBillForm {
     static toFormData(handBill: AddHandBillDTO): FormData {
-        console.log("addHandBillDto", handBill);
         const formData = new FormData();
 
         handBill.mediaFiles?.forEach((mediaFiles, index) => {

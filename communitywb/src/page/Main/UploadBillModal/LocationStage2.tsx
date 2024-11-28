@@ -9,7 +9,7 @@ import AddressAutoComplete from '../../../component/Map/AddressAutoComplete';
 import MapCenter from '../../../component/Map/MapCenter';
 import MapComponent from '../../../component/Map/MapComponent';
 import MapReadyHandler from '../../../component/Map/MapReadyHandler';
-import styles from '../../../css/LocationStage2.module.css';
+import styles from '../../../css/UploadHandBillModal/LocationStage2.module.css';
 import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
 import { useReverseGeocode } from '../../../hooks/useReverseGeocode';
 import { useUploadBillStore } from '../../../stores/createHandBillFormStore';

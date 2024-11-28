@@ -10,7 +10,6 @@ selectedHandBill: HandBill;
 const MapSection: React.FC<MapSectionProps> = ({
     selectedHandBill,
 }) => {
-    console.log('MapSection rendered');
     const { currentLocation ,getCurrentLocation } = useCurrentLocation();
     /** Fetch user location on mount */
     useEffect(() => {

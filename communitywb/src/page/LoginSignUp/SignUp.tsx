@@ -2,7 +2,7 @@
 import { Button, Form, Input, notification, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSignUpMutation } from '../../api/UserAccount/userAccountQuery';
-import styles from '../../css/SignUpPage.module.css';
+import styles from '../../css/AuthenticationPage/SignUpPage.module.css';
 import { UserSignUpDto } from '../../dto/userAccount/userSignUpDto';
 const { Title, Link, Text } = Typography;
 
@@ -25,7 +25,6 @@ const SignUp = ({ toggleToLogin }: { toggleToLogin: () => void }) => {
     const handleSignUp = (values: any) => {
         const { contact, password, fullname, username } = values;
 
-        console.log('Sign-up attempted with:', values);
         const signUpData: UserSignUpDto = {
             email: null,
             phone: null,

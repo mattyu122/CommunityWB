@@ -4,7 +4,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Carousel } from 'antd';
 import React, { useCallback, useRef, useState } from 'react';
 import LinkButton from '../../../component/Button/LinkButton';
-import styles from '../../../css/MediaCarousel.module.css';
+import styles from '../../../css/HandBillModal/MediaCarousel.module.css';
 import { HandBillMedia } from '../../../models/HandBillMedia';
 interface MediaCarouselProps {
 mediaList: HandBillMedia[];

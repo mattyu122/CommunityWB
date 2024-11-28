@@ -23,3 +23,9 @@
 .browsedDiv {
     opacity: 0.5;
 }
+
+.handbillCard {
+    margin: 0;
+    border: none;
+    box-shadow: none; /* Remove default shadow */
+}

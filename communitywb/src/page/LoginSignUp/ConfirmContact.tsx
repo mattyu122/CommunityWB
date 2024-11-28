@@ -1,10 +1,10 @@
 import { Form, Input, notification, Typography } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useConfirmContactMutation } from '../api/UserAccount/userAccountQuery';
-import LinkButton from '../component/Button/LinkButton';
-import styles from '../css/ConfirmEmailPage.module.css';
-import { UserConfirmContactDto } from '../dto/userAccount/UserConfirmContactDto';
-import { useUserStore } from '../stores/userStateStore';
+import { useConfirmContactMutation } from '../../api/UserAccount/userAccountQuery';
+import LinkButton from '../../component/Button/LinkButton';
+import styles from '../../css/AuthenticationPage/ConfirmEmailPage.module.css';
+import { UserConfirmContactDto } from '../../dto/userAccount/UserConfirmContactDto';
+import { useUserStore } from '../../stores/userStateStore';
 const { Title, Text } = Typography;
 
 const ConfirmContact = () => {
@@ -17,7 +17,6 @@ const ConfirmContact = () => {
     const handleConfirmEmail = (values: any) => {
         const { confirmationCode } = values;
 
-        console.log('Email confirmation attempted with:', values);
 
         const confirmContactData: UserConfirmContactDto = {
             ...signUpData,

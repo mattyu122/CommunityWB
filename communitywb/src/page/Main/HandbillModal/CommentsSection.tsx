@@ -10,7 +10,7 @@ import React, {
     useRef
 } from 'react';
 import { useCommentPagesInfiniteQuery } from '../../../api/Comment/commentQuery';
-import styles from "../../../css/CommentsSection.module.css";
+import styles from "../../../css/HandBillModal/CommentsSection.module.css";
 import { HandBill } from '../../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../../stores/browsedHandBillStore';
 const { Text } = Typography;
@@ -50,7 +50,6 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
 
     // Flatten all pages of comments into a single array
     const allComments = React.useMemo(() => {
-        console.log("Data:", data);
         return data
         ? data.pages.flatMap((page) => page?.comments || [])
         : [];
@@ -98,7 +97,7 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
         <div onScroll={handleScroll} ref={commentsRef} style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
             {/* Handbill Caption as a List */}
             <List itemLayout="horizontal">
-                <List.Item>
+                <List.Item key={selectedHandBill.id}>
                     <List.Item.Meta
                     avatar={<Avatar src={selectedHandBill.user.imageUrl} icon={<UserOutlined/>}/>}
                     title={
@@ -137,8 +136,8 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
                                             {comment.commentMedia &&
                                             <Image.PreviewGroup>
                                                 {
-                                                    comment.commentMedia.map((media) => (
-                                                        <div className={styles.commentMedia}>
+                                                    comment.commentMedia.map((media,index) => (
+                                                        <div className={styles.commentMedia} key={media.mediaUrl || index}>
                                                             <Image src={media.mediaUrl} alt="Full Size"/>
                                                         </div>
                                                     ))

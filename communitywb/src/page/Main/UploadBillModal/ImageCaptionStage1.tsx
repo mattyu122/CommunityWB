@@ -5,7 +5,7 @@ import { RcFile } from 'antd/es/upload/interface';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import LinkButton from '../../../component/Button/LinkButton';
-import styles from '../../../css/ImageCaptionStage1.module.css';
+import styles from '../../../css/UploadHandBillModal/ImageCaptionStage1.module.css';
 import { useUploadBillStore } from '../../../stores/createHandBillFormStore';
 
 const ImageCaptionStage1: React.FC = () => {
@@ -24,7 +24,6 @@ const ImageCaptionStage1: React.FC = () => {
 
     const handleFileChange = (newFiles: RcFile[]) => {
         const allFiles = [...uploadFileList, ...newFiles]
-        console.log("All Files:", allFiles);
         const newPreviews = allFiles.map((file) => URL.createObjectURL(file));
         setUploadFileList(allFiles);
         setImagePreview(newPreviews);

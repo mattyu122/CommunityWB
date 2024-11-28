@@ -15,16 +15,16 @@ import { useReverseGeocode } from '../../hooks/useReverseGeocode';
 import { Board } from '../../models/Board';
 import { useLocationStore } from '../../stores/locationStore';
     interface LocationMapProps {
-        boardListRef: React.MutableRefObject<Board[]>;
+        boardList: Board[];
         hoveredHandBillId: number | null;
     }
 
-    const LocationMap: React.FC<LocationMapProps> = ({ boardListRef, hoveredHandBillId }) => {
+    const LocationMap: React.FC<LocationMapProps> = ({ boardList, hoveredHandBillId }) => {
     // Define the custom icon
     const [address, setAddress] = useState<string>('');
     const { fetchReverseGeocode } = useReverseGeocode();
     const { getCurrentLocation } = useCurrentLocation();
-    const { currentLocation, location, radius,setLocation, setRadius } = useLocationStore();
+    const { currentLocation, radius,setLocation, setRadius } = useLocationStore();
     const [modalRadius, setModalRadius] = useState<number>(radius);
     const [modalLocation, setModalLocation] = useState<LatLng | null>(currentLocation);
 
@@ -32,12 +32,13 @@ import { useLocationStore } from '../../stores/locationStore';
     // Memoize the zero location to avoid recreating it
     const zeroLatLng = useMemo(() => new LatLng(0, 0), []);
     useEffect(() => {
-        const handleSetCurrentLocation = async () => {
-            const currentLoc = await getCurrentLocation();
-            setModalLocation(currentLoc);
-
+        if (!modalLocation) {
+            const handleSetCurrentLocation = async () => {
+                const currentLoc = await getCurrentLocation();
+                setModalLocation(currentLoc);
+            };
+            handleSetCurrentLocation();
         }
-        handleSetCurrentLocation();
     }, []);
 
 
@@ -54,10 +55,10 @@ import { useLocationStore } from '../../stores/locationStore';
 
 
     // Memoize handleOnClickSetLocation function
-    const handleOnClickSetLocation = useCallback(() => {
+    const handleOnClickSetLocation = () => {
         setLocation(modalLocation ?? zeroLatLng);
         setRadius(modalRadius);
-    }, [modalLocation, location, modalRadius]);
+    }
     
     // Memoize functions passed as props to child components
     const handleSetModalLocation = useCallback(
@@ -91,7 +92,7 @@ import { useLocationStore } from '../../stores/locationStore';
                                 zoomToBoundsOnClick={true}
                                 spiderLegPolylineOptions={{ weight: 1.5, color: '#222' }}
                             >
-                            {boardListRef.current.map((board) =>
+                            {boardList.map((board) =>
                                 board.handbills.map((handBill) =>
                                     handBill.location && (
                                         <Marker
@@ -121,4 +122,4 @@ import { useLocationStore } from '../../stores/locationStore';
     )
     };
 
-    export default LocationMap;
+    export default React.memo(LocationMap);

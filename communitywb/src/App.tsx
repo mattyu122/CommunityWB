@@ -4,7 +4,7 @@ import { axiosClient, axiosClientMultipart } from './api/axios/axiosClient';
 import { setupInterceptors } from './api/axios/axiosInterceptor';
 import './App.css'; // Import the external CSS file
 import { useNavigation } from './hooks/useNavigation';
-import ConfirmContact from './page/ConfirmContact';
+import ConfirmContact from './page/LoginSignUp/ConfirmContact';
 import LoginSignUpPage from './page/LoginSignUp/LoginSignUp';
 import MainPage from './page/Main/Main';
 import { useUserStore } from './stores/userStateStore';

@@ -79,7 +79,6 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onComme
 
     /** Handle closing the confirm upload modal */
     const handleCloseConfirmModal = useCallback(() => {
-        console.log("Close Confirm Modal");
         setUploadedFileList([]);
         setCommentMediaPreview([]);
         setIsConfirmModalVisible(false);

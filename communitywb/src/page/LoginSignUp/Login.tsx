@@ -1,9 +1,9 @@
 // src/components/Login.tsx
-import { Button, Form, Input, notification, Typography } from 'antd';
+import { Button, Form, Input, message, Typography } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSignInMutation } from '../../api/UserAccount/userAccountQuery';
-import styles from '../../css/LoginPage.module.css';
+import styles from '../../css/AuthenticationPage/LoginPage.module.css';
 import { UserSignInDto } from '../../dto/userAccount/UserSignInDto';
 import { useUserStore } from '../../stores/userStateStore';
 
@@ -24,22 +24,14 @@ const Login = ({ toggleToSignUp }: { toggleToSignUp: () => void }) => {
         signIn(signInData,{
             onSuccess: (data) => {
                 const { user, accessToken, refreshToken, idToken } = data; // Assuming these are returned by the backend
-                console.log('sign in success', data);
                 setTokens(accessToken, refreshToken, idToken);
                 setUser(user);
-                notification.success({
-                    message: 'Sign In Successful',
-                    description: "Getting handbills around you...",
-                });
+                message.success('Sign In Successful! Getting handbills around you...');
                 navigate('/'); // Navigate to the main page
 
             },
             onError: (error: any) => {
-                console.log('sign in error', error);
-                notification.error({
-                    message: 'Sign In Failed',
-                    description: error.response.data.message,
-                });
+                message.error(`Sign In Failed: ${error.message}`);
             }
         });
     };
@@ -59,7 +51,7 @@ const Login = ({ toggleToSignUp }: { toggleToSignUp: () => void }) => {
             rules={[{ required: true, message: 'Please input your username!' }]}
             >
             <Input
-                placeholder="Phone number, username, or email"
+                placeholder="username or email"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
             />

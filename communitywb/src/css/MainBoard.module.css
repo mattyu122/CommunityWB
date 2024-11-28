@@ -17,8 +17,8 @@
 }
 
 .handbillContainer {
-    flex: 1; 
-    overflow-y: auto; 
-    height: calc(100vh - 70px); /* Adjust this to match the header height */
+    flex: 1;
+    overflow-y: auto;
+    height: calc(100vh - 70px); ;
     width: 75vw;
 }

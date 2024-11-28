@@ -10,7 +10,6 @@ export interface AddCommentDto{
 
 export class AddCommentForm {
     static toFormData(comment: AddCommentDto): FormData {
-        console.log("addCommentDto", comment);
         const formData = new FormData();
 
         comment.mediaFiles?.forEach((mediaFiles, index) => {

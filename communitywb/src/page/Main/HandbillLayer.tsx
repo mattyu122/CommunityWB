@@ -5,7 +5,6 @@ import { HandBill } from '../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../stores/browsedHandBillStore';
 import HandBillComponent from './HandbillComponent';
 import HandbillModal from './HandbillModal/HandbillModal';
-
 interface HandbillLayerProps {
 boardList: Board[];
 onHandBillHover: (handBillId: number | null) => void;
@@ -27,7 +26,7 @@ const closeModal = () => {
 };
 
 return (
-<div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+<div style={{width: '100%', overflow: 'auto' }}>
     {boardList.map((board, boardIndex) => (
     <div
         key={boardIndex}
@@ -35,29 +34,29 @@ return (
         style={{ width: board.maxWidth, height: board.maxHeight }}
     >
         {board.handbills.map((handBill) => {
-        const isBrowsed = browsedHandbills.some((entry) => entry.id === handBill.id);
+            const isBrowsed = browsedHandbills.some((entry) => entry.id === handBill.id);
 
-        return (
-            <div
-            key={handBill.id}
-            style={{
-                position: 'absolute',
-                width: `${handBill.width}px`,
-                height: `${handBill.height}px`,
-                left: `${handBill.positionX}px`,
-                top: `${handBill.positionY}px`,
-            }}
-            onMouseEnter={() => onHandBillHover(handBill.id)}
-            onMouseLeave={() => onHandBillHover(null)}
-            >
-            <HandBillComponent
-                handBill={handBill}
-                onClickHandBillHandler={onHandBillClickHandle}
-                isBrowsed={isBrowsed}
-            />
-            </div>
-        );
-        })}
+            return (
+                <div
+                key={handBill.id}
+                style={{
+                    position: 'absolute',
+                    width: `${handBill.width}px`,
+                    height: `${handBill.height}px`,
+                    left: `${handBill.positionX}px`,
+                    top: `${handBill.positionY}px`,
+                }}
+                onMouseEnter={() => onHandBillHover(handBill.id)}
+                onMouseLeave={() => onHandBillHover(null)}
+                >
+                    <HandBillComponent
+                        handBill={handBill}
+                        onClickHandBillHandler={onHandBillClickHandle}
+                        isBrowsed={isBrowsed}
+                    />
+                </div>
+            );
+            })}
     </div>
     ))}
 
