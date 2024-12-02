@@ -5,70 +5,71 @@ import { HandBill } from '../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../stores/browsedHandBillStore';
 import HandBillComponent from './HandbillComponent';
 import HandbillModal from './HandbillModal/HandbillModal';
+
 interface HandbillLayerProps {
-boardList: Board[];
-onHandBillHover: (handBillId: number | null) => void;
+    boardList: Board[];
+    onHandBillHover: (handBillId: number | null) => void;
 }
 
 const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHover }) => {
-const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
+    const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
 
-const { browsedHandbills } = useBrowsedHandbillsStore();
-const onHandBillClickHandle = useCallback(
-    (handBill: HandBill) => {
-        setSelectedHandBill(handBill);
-    },
-[]
-);
+    const { browsedHandbills } = useBrowsedHandbillsStore();
+    const onHandBillClickHandle = useCallback(
+        (handBill: HandBill) => {
+            setSelectedHandBill(handBill);
+        },
+    []
+    );
 
-const closeModal = () => {
-    setSelectedHandBill(null);
-};
+    const closeModal = () => {
+        setSelectedHandBill(null);
+    };
 
-return (
-<div style={{width: '100%', overflow: 'auto' }}>
-    {boardList.map((board, boardIndex) => (
-    <div
-        key={boardIndex}
-        className={styles.photoDisplay}
-        style={{ width: board.maxWidth, height: board.maxHeight }}
-    >
-        {board.handbills.map((handBill) => {
-            const isBrowsed = browsedHandbills.some((entry) => entry.id === handBill.id);
+    return (
+        <div>
+            {boardList.map((board, boardIndex) => (
+            <div
+                key={boardIndex}
+                className={styles.photoDisplay}
+                style={{ width: board.maxWidth, height: board.maxHeight }}
+            >
+                {board.handbills.map((handBill) => {
+                    const isBrowsed = browsedHandbills.some((entry) => entry.id === handBill.id);
 
-            return (
-                <div
-                key={handBill.id}
-                style={{
-                    position: 'absolute',
-                    width: `${handBill.width}px`,
-                    height: `${handBill.height}px`,
-                    left: `${handBill.positionX}px`,
-                    top: `${handBill.positionY}px`,
-                }}
-                onMouseEnter={() => onHandBillHover(handBill.id)}
-                onMouseLeave={() => onHandBillHover(null)}
-                >
-                    <HandBillComponent
-                        handBill={handBill}
-                        onClickHandBillHandler={onHandBillClickHandle}
-                        isBrowsed={isBrowsed}
-                    />
-                </div>
-            );
-            })}
-    </div>
-    ))}
+                    return (
+                        <div
+                        key={handBill.id}
+                        style={{
+                            position: 'absolute',
+                            width: `${handBill.width}px`,
+                            height: `${handBill.height}px`,
+                            left: `${handBill.positionX}px`,
+                            top: `${handBill.positionY}px`,
+                        }}
+                        onMouseEnter={() => onHandBillHover(handBill.id)}
+                        onMouseLeave={() => onHandBillHover(null)}
+                        >
+                            <HandBillComponent
+                                handBill={handBill}
+                                onClickHandBillHandler={onHandBillClickHandle}
+                                isBrowsed={isBrowsed}
+                            />
+                        </div>
+                    );
+                    })}
+            </div>
+            ))}
 
-    {/* Conditionally render HandbillModal */}
-    {selectedHandBill && (
-        <HandbillModal
-            closeModal={closeModal}
-            selectedHandBill={selectedHandBill}
-        />
-    )}
-</div>
-);
+            {/* Conditionally render HandbillModal */}
+            {selectedHandBill && (
+                <HandbillModal
+                    closeModal={closeModal}
+                    selectedHandBill={selectedHandBill}
+                />
+            )}
+        </div>
+    );
 };
 
 export default React.memo(HandbillLayer);

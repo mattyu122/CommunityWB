@@ -19,6 +19,6 @@
 .handbillContainer {
     flex: 1;
     overflow-y: auto;
-    height: calc(100vh - 70px); ;
+    height: calc(100vh - 70px);
     width: 75vw;
 }

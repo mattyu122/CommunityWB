@@ -12,7 +12,8 @@ import LocationMap from './LocationMap';
 
 const MainBoard = () => {
     const [boardList, setBoardList] = useState<Board[]>([]);
-    const containerRef = useRef<HTMLDivElement | null>(null); // Ref for the container
+    const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Track overflow state
+    const handbillContainerRef = useRef<HTMLDivElement | null>(null);
     const [hoveredHandBillId, setHoveredHandBillId] = useState<number | null>(null);
     const processedIdsRef = useRef(new Set());
 
@@ -21,7 +22,6 @@ const MainBoard = () => {
 
     const isLocationValid = location && !isNaN(location.lat) && !isNaN(location.lng);
 
-    // Store the previous location and radius
     const prevLocationRef = useRef(location);
     const prevRadiusRef = useRef(radius);
     const queryClient = useQueryClient();
@@ -50,11 +50,11 @@ const MainBoard = () => {
     }, []);
 
     useEffect(() => {
-        if ( isLocationValid &&
-            (   prevLocationRef.current?.lat !== location?.lat ||
+        if (
+            isLocationValid &&
+            (prevLocationRef.current?.lat !== location?.lat ||
                 prevLocationRef.current?.lng !== location?.lng ||
-                prevRadiusRef.current !== radius
-            )
+                prevRadiusRef.current !== radius)
         ) {
             processedIdsRef.current.clear();
             setBoardList([]);
@@ -62,27 +62,30 @@ const MainBoard = () => {
             prevLocationRef.current = location;
             prevRadiusRef.current = radius;
         }
-    }, [location,radius]);
+    }, [location, radius]);
 
     useEffect(() => {
         if (data) {
             const latestPage = data.pages[data.pages.length - 1];
             const latestHandBills = latestPage.handBills;
-                // Filter out already processed handbills
+
             const newHandBills = latestHandBills.filter(
-                    (handbill) => !processedIdsRef.current.has(handbill.id)
+                (handbill) => !processedIdsRef.current.has(handbill.id)
             );
-            if (containerRef.current && newHandBills.length > 0) {
-                const container = containerRef.current;
+            if (handbillContainerRef.current && newHandBills.length > 0) {
+                const container = handbillContainerRef.current;
                 const newBoardList = processHandBills(
-                        boardList,
-                        newHandBills,
-                        container.clientWidth,
-                        container.clientHeight
+                    boardList,
+                    newHandBills,
+                    container.clientWidth,
+                    container.clientHeight
                 );
-                // Update the set of processed IDs
+
                 newHandBills.forEach((handbill) => processedIdsRef.current.add(handbill.id));
                 setBoardList(newBoardList);
+
+                // Check if content is overflowing
+                setIsOverflowing(container.scrollHeight > container.clientHeight);
             }
         }
     }, [data]);
@@ -108,40 +111,41 @@ const MainBoard = () => {
 
     return (
         <div className={styles.mainContainer}>
-                <div className={styles.whiteboard}>
-                    <div className={styles.locationMapContainer}>
-                        <LocationMap
-                            boardList={boardList}
-                            hoveredHandBillId={hoveredHandBillId}
-                        />
-                    </div>
-                    <Divider type="vertical" style={{ height: '100%' }} />
-                    <div
-                        className={styles.handbillContainer}
-                        ref={containerRef} // Assign the ref here
-                        onScroll={handleScroll}
-                    >
-                        
-                        {
-                            isFetching && !isFetchingNextPage ? (
-                                <div className={styles.loadingContainer}> 
-                                    <Spin tip="Getting handbills around you..." />
-                                </div>) : (
-                                    <HandbillLayer
-                                    boardList={boardList}
-                                    onHandBillHover={onHandBillHover}
-                                    />
-                                )
-                        }
-                        
-                        {isFetchingNextPage && (
-                            <div className={styles.loadingMoreContainer}>
-                                <Spin tip="Loading more handbills..." />
-                            </div>
-                        )}
-                    </div>
+            <div className={styles.whiteboard}>
+                <div className={styles.locationMapContainer}>
+                    <LocationMap
+                        boardList={boardList}
+                        hoveredHandBillId={hoveredHandBillId}
+                    />
                 </div>
-            
+                <Divider type="vertical" style={{ height: '100%' }} />
+                <div
+                    className={styles.handbillContainer}
+                    ref={handbillContainerRef}
+                    style={{
+                        overflowY: isOverflowing ? 'auto' : 'hidden',
+                        overflowX: 'hidden',
+                    }}
+                    onScroll={handleScroll}
+                >
+                    {isFetching && !isFetchingNextPage ? (
+                        <div className={styles.loadingContainer}>
+                            <Spin tip="Getting handbills around you..." />
+                        </div>
+                    ) : (
+                        <HandbillLayer
+                            boardList={boardList}
+                            onHandBillHover={onHandBillHover}
+                        />
+                    )}
+
+                    {isFetchingNextPage && (
+                        <div className={styles.loadingMoreContainer}>
+                            <Spin tip="Loading more handbills..." />
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
