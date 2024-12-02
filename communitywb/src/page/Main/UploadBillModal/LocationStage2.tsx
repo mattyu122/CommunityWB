@@ -8,7 +8,6 @@ import React, { useEffect } from 'react';
 import AddressAutoComplete from '../../../component/Map/AddressAutoComplete';
 import MapCenter from '../../../component/Map/MapCenter';
 import MapComponent from '../../../component/Map/MapComponent';
-import MapReadyHandler from '../../../component/Map/MapReadyHandler';
 import styles from '../../../css/UploadHandBillModal/LocationStage2.module.css';
 import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
 import { useReverseGeocode } from '../../../hooks/useReverseGeocode';
@@ -50,7 +49,6 @@ const LocationStage2: React.FC = () => {
         <div className={styles.card}>
             <div className={styles.map}>
             <MapComponent location={location} setLocation={setLocation}>
-                <MapReadyHandler isOpen={true} />
                 <MapCenter location={location} zoom={13} />
             </MapComponent>
             </div>

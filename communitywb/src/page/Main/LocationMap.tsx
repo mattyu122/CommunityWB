@@ -8,7 +8,6 @@ import { customIcon, enlargedIcon } from '../../component/Icon/HandbillIcon';
 import AddressAutoComplete from '../../component/Map/AddressAutoComplete';
 import MapCenter from '../../component/Map/MapCenter';
 import MapComponent from '../../component/Map/MapComponent';
-import MapReadyHandler from '../../component/Map/MapReadyHandler';
 import styles from '../../css/LocationMap.module.css';
 import { useCurrentLocation } from '../../hooks/useCurrentLocation';
 import { useReverseGeocode } from '../../hooks/useReverseGeocode';
@@ -34,6 +33,7 @@ import { useLocationStore } from '../../stores/locationStore';
     useEffect(() => {
         if (!modalLocation) {
             const handleSetCurrentLocation = async () => {
+                console.log('set current location in location map');
                 const currentLoc = await getCurrentLocation();
                 setModalLocation(currentLoc);
             };
@@ -82,7 +82,6 @@ import { useLocationStore } from '../../stores/locationStore';
                     <div style={{height: '100%'}}>
                         <MapComponent location={modalLocation} setLocation={setModalLocation}>
                             <MapCenter location={modalLocation} zoom={13} />
-                            <MapReadyHandler isOpen={true} />
                             <Circle center={modalLocation} radius={modalRadius} color="blue" fillColor="blue" fillOpacity={0.2} />
                             <MarkerClusterGroup
                                 removeOutsideVisibleBounds={true}

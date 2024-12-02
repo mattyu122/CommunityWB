@@ -1,5 +1,5 @@
 // src/components/UploadBillModal.tsx
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { useAddHandBillMutation } from '../../../api/handbill/handBillQuery';
 import LinkButton from '../../../component/Button/LinkButton';
@@ -30,6 +30,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({ isOpen, onClose }) =>
 
   useEffect(() => {
     if (isSuccess) {
+      message.success('Handbill uploaded successfully!');
       resetForm();
       onClose(true);
     }

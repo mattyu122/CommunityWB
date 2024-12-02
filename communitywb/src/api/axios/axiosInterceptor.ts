@@ -1,7 +1,8 @@
-// utils/axiosInterceptor.js
+// utils/axiosInterceptor.ts
 import { AxiosInstance } from 'axios';
 import { clearTokensAndUser, refreshAccessToken } from '../../utils/tokenUtils';
-export const setupInterceptors = (client: AxiosInstance) => {
+
+export const setupInterceptors = (client: AxiosInstance, navigateToLogin: () => void) => {
     // Request Interceptor
     client.interceptors.request.use(
         (config) => {
@@ -11,7 +12,7 @@ export const setupInterceptors = (client: AxiosInstance) => {
             const token = localStorage.getItem('accessToken');
             if (token) {
                 config.headers['Authorization'] = `Bearer ${token}`;
-            } 
+            }
             return config;
         },
         (error) => Promise.reject(error)
@@ -22,6 +23,7 @@ export const setupInterceptors = (client: AxiosInstance) => {
         (response) => response,
         async (error) => {
             const originalRequest = error.config;
+
             if (error.response.status === 410 && !originalRequest._retry) {
                 originalRequest._retry = true;
                 try {
@@ -31,8 +33,15 @@ export const setupInterceptors = (client: AxiosInstance) => {
                 } catch (refreshError) {
                     console.error('Failed to refresh token:', refreshError);
                     clearTokensAndUser();
+                    navigateToLogin();
                     return Promise.reject(refreshError);
                 }
+            } else if (error.response.status === 401) {
+                console.log('401 Unauthorized', error);
+                // Handle 401 Unauthorized
+                clearTokensAndUser();
+                navigateToLogin();
+                return Promise.reject(error);
             }
             return Promise.reject(error);
         }

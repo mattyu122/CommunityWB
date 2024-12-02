@@ -39,7 +39,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ location, setLocation, chil
             <div>
                 <FloatButton
                     icon={showAttribution ? <CloseCircleOutlined /> : <InfoCircleOutlined />}
-                    style={{ position: 'absolute', top: '12%', left: '2.6%', width: 30, height: 30 }}
+                    style={{ position: 'absolute', top: '12%', left: '2.65%', width: 30, height: 30 }}
                     onClick={toggleAttribution}
                 />
             </div>

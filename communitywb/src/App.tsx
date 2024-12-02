@@ -13,14 +13,10 @@ function App() {
   const { accessToken } = useUserStore();
   useEffect(() => {
       // Pass navigateToLogin to interceptors
-      setupInterceptors(axiosClient);
-      setupInterceptors(axiosClientMultipart);
+      setupInterceptors(axiosClient, navigateToLogin);
+      setupInterceptors(axiosClientMultipart, navigateToLogin);
   }, [navigateToLogin]);
-  useEffect(() => {
-      if (!accessToken) {
-        navigateToLogin();
-      }
-  }, [accessToken, navigateToLogin]);
+
   return (
       <Routes>
         <Route path="/" element={<MainPage />} />
