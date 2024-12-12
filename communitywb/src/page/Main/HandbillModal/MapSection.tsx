@@ -26,7 +26,7 @@ const MapSection: React.FC<MapSectionProps> = ({
         style={{ height: '100%', width: '100%' }}
         >
         <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             attribution="&copy; OpenStreetMap contributors"
         />
         <Marker position={selectedHandBill.location!} icon={customIcon}/>
