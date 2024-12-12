@@ -1,5 +1,7 @@
 import { LatLng } from 'leaflet';
 import { GetHandBillPageDto } from '../../dto/handbill/getHandBillPageDto';
+import { handbillInteractionDto } from '../../dto/handbill/handbillInteractionDto';
+import { HandBill } from '../../models/HandBill';
 import { axiosClient, axiosClientMultipart } from '../axios/axiosClient';
 interface HandbillPagesQueryParams {
     location: LatLng;
@@ -35,6 +37,17 @@ export const getHandBillPages = async ({
     }
 };
 
+export const getHandBillById = async (id: number) => {
+    try {
+        const {data} = await axiosClient.get(`/handbill/${id}`);
+        const handBill: HandBill = data;
+        return handBill;
+    } catch (error) {
+        console.error('Error fetching handbill by id:', error);
+        throw new Error('Failed to fetch handbill by id.');
+    }
+}
+
 export const addHandBill = async (formData: FormData) => {
     try{
         const response = await axiosClientMultipart.post('/handbill/addHandBill', formData);
@@ -42,5 +55,18 @@ export const addHandBill = async (formData: FormData) => {
     }catch(error){
         console.error('Error adding handbill:', error);
         throw new Error('Failed to add handbill.');
+    }
+}
+
+export const handbillInteraction = async({handbillId, interactionType , userId}: handbillInteractionDto) => {
+    try{
+        await axiosClient.post(`/handbill/interaction`, {
+            userId,
+            handbillId,
+            interactionType,
+        });
+    }catch(error){
+        console.error('Error interacting with handbill:', error);
+        throw new Error('Failed to interact with handbill.');
     }
 }

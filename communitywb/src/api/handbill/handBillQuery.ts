@@ -1,6 +1,8 @@
-import { keepPreviousData, useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { LatLng } from 'leaflet';
-import { addHandBill, getHandBillPages } from './handbillApi';
+import { isNull } from 'lodash';
+import { handbillInteractionDto } from '../../dto/handbill/handbillInteractionDto';
+import { addHandBill, getHandBillById, getHandBillPages, handbillInteraction } from './handbillApi';
 
 
 interface HandbillPagesInfiniteQueryParams {
@@ -39,12 +41,36 @@ export const useHandbillPagesInfiniteQuery = ({ location, radius, size = 10, ena
     });
 }
 
+export const useHandbillIdQuery = (id: number | null) => {
+    return useQuery({
+        queryKey: ['handbill', id],
+        queryFn: () => {
+            if (isNull(id)) {
+                return Promise.reject(new Error('ID is null'));
+            }
+            return getHandBillById(id);
+        },
+        enabled: false,
+    })
+}
+
 export const useAddHandBillMutation = () =>{
     return useMutation({
         mutationFn: (formData: FormData) => addHandBill(formData),
         onSuccess: () => {
+            
         },
         onError: (error)=> {
         }
     })
+}
+
+export const useHandbillInteractionMutation = () => {
+    return useMutation({
+        mutationFn: (handbillInteractionDto: handbillInteractionDto) => handbillInteraction(handbillInteractionDto),
+        onSuccess: () => {
+        },
+        onError: (error) => {
+        }
+    });
 }

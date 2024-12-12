@@ -5,7 +5,9 @@ import { Button, Input, Upload, message, } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAddCommentMutation } from '../../../api/Comment/commentQuery';
+import { useHandbillInteractionMutation } from '../../../api/handbill/handBillQuery';
 import { AddCommentDto, AddCommentForm } from '../../../dto/comment/AddCommentDto';
+import { HandbillInteractionType } from '../../../enum/HandbillInteractionType';
 import { useUserStore } from '../../../stores/userStateStore';
 import ConfirmMediaUploadModal from './ConfirmMediaUploadModal'; // Import the component
 
@@ -23,7 +25,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onComme
 
     const { user } = useUserStore();
     const { mutate: addComment, isSuccess } = useAddCommentMutation();
-
+    const { mutate: addHandBillInteraction,} = useHandbillInteractionMutation();
     /** Handle text change */
     const handleTextChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -63,19 +65,24 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onComme
 
     /** Handle confirm upload */
     const handleConfirmUpload = useCallback(() => {
+        if (!user) {
+            message.error('You must be logged in to comment');
+            return;
+        }
         const trimCommentText = commentText.trim();
         if (!trimCommentText && uploadedFileList.length === 0) return; // Prevent empty submissions
 
         const addCommentDto: AddCommentDto = {
             content: trimCommentText,
             mediaFiles: uploadedFileList,
-            userId: user?.id!,
+            userId: user.id,
             handbillId: selectedHandBillId,
             parentId: null,
         };
         const formData = AddCommentForm.toFormData(addCommentDto);
         addComment(formData);
-    }, [commentText, uploadedFileList, addComment, user?.id, selectedHandBillId]);
+        addHandBillInteraction({handbillId: selectedHandBillId, userId: user.id, interactionType: HandbillInteractionType.COMMENT});
+    }, [commentText, uploadedFileList, user, selectedHandBillId, addComment, addHandBillInteraction]);
 
     /** Handle closing the confirm upload modal */
     const handleCloseConfirmModal = useCallback(() => {

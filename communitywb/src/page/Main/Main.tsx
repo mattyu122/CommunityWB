@@ -1,6 +1,7 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Layout, Modal, Space } from 'antd'; // Import Modal from Ant Design
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../App.css'; // Import the external CSS file
 import TextButton from '../../component/Button/TextButton';
 import { clearTokensAndUser } from '../../utils/tokenUtils';
@@ -11,7 +12,7 @@ const { Header, Content } = Layout;
 
 function MainPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+    const navigate = useNavigate();
     const onUploadBillClose = useCallback((finishedUpload: boolean) => {
         if (finishedUpload) {
             // Close the modal
@@ -37,6 +38,7 @@ function MainPage() {
 
     const handleLogout = () => {
         clearTokensAndUser();
+        navigate('/loginSignUp');
     };
 
     return (

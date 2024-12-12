@@ -10,6 +10,7 @@ import CommentInput from './CommentInput';
 import CommentsSection, { CommentsSectionHandle } from './CommentsSection';
 import MapSection from './MapSection';
 import MediaCarousel from './MediaCarousel';
+import ShareSection from './ShareTab/ShareSection';
 
 interface HandbillModalProps {
     closeModal: () => void;
@@ -78,6 +79,11 @@ const HandbillModal: React.FC<HandbillModalProps> = ({ closeModal, selectedHandB
                         <MapSection selectedHandBill={selectedHandBill} /> :
                         <Empty description={<Text>No location available</Text>} />,
         },
+        {
+            label: 'Share',
+            key: '4',
+            children: selectedHandBill ? <ShareSection selectedHandBill={selectedHandBill} /> : <Empty description={<Text>No handbill selected</Text>} />,
+        }
     ];
 
     return (

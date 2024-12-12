@@ -112,7 +112,7 @@ import { useLocationStore } from '../../stores/locationStore';
                         </MapComponent>
                     </div>
                 )}
-                <Slider min={100} max={5000} value={modalRadius} onChange={setModalRadius} />
+                <Slider min={100} max={100000} value={modalRadius} onChange={setModalRadius} />
                 <label >Radius: {modalRadius} meters</label>
                 <Button onClick={handleOnClickSetLocation}>
                     Set Location

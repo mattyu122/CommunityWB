@@ -22,7 +22,7 @@ const AddressAutoComplete: React.FC<AddressAutoCompleteProps> = ({
     const fetchAddressSuggestions = async (inputValue: string) => {
     try {
         const { data } = await axiosClient.get('https://api.locationiq.com/v1/autocomplete', {
-        params: { q: inputValue, limit: 5 ,key: 'pk.4edbc0256c02c27c211ab930a748dc3e', dedupe:1},
+        params: { q: inputValue, limit: 5 ,key: 'pk.19fb8e36610adc8e55d45bef516864f5', dedupe:1},
         });
         setSuggestions(
         data.map(({ display_name, lat, lon }: any) => ({
