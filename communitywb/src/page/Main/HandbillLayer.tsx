@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useHandbillIdQuery } from '../../api/handbill/handBillQuery';
+import { useHandbillIdQuery, useHandbillInteractionMutation } from '../../api/handbill/handBillQuery';
 import styles from '../../css/HandBillLayer.module.css';
+import { HandbillInteractionType } from '../../enum/HandbillInteractionType';
 import { Board } from '../../models/Board';
 import { HandBill } from '../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../stores/browsedHandBillStore';
+import { useUserStore } from '../../stores/userStateStore';
 import HandBillComponent from './HandbillComponent';
 import HandbillModal from './HandbillModal/HandbillModal';
 
@@ -16,6 +18,8 @@ interface HandbillLayerProps {
 const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHover }) => {
     const [selectedHandBill, setSelectedHandBill] = useState<HandBill | null>(null);
     const { browsedHandbills } = useBrowsedHandbillsStore();
+    const { user } = useUserStore();
+    const { mutate: addHandBillInteraction } = useHandbillInteractionMutation();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
 
@@ -23,15 +27,16 @@ const HandbillLayer: React.FC<HandbillLayerProps> = ({ boardList, onHandBillHove
         id ? parseInt(id, 10) : null
     );
 
-    // const onHandBillClickHandle = useCallback(
-    //     (handBill: HandBill) => {
-    //         navigate(`/handbill/${handBill.id}`); // Navigate to /handbill/:id
-    //     },
-    //     [navigate]
-    // );
-
     const onHandbillClick = useCallback(
         (handBill: HandBill) => {
+            if(!user){
+                return;
+            }
+            addHandBillInteraction({
+                handbillId: handBill.id,
+                interactionType: HandbillInteractionType.CLICK,
+                userId: user.id,
+            })
             setSelectedHandBill(handBill);
         },
         []
