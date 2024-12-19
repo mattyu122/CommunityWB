@@ -1,8 +1,8 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Button, Carousel, Modal } from "antd";
 import React, { useRef, useState } from "react";
-import LinkButton from "../../../component/Button/LinkButton";
-import styles from "../../../css/HandBillModal/ConfirmMediaUploadModal.module.css";
+import LinkButton from "../../../../component/Button/LinkButton";
+import styles from "../../../../css/HandBillModal/ConfirmMediaUploadModal.module.css";
 
 interface ConfirmModalProps {
 isVisible: boolean;

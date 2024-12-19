@@ -2,15 +2,15 @@
 
 import { Empty, Modal, Tabs } from 'antd';
 import React, { useCallback, useRef } from 'react';
-import { HandBill } from '../../../models/HandBill';
+import { HandBill } from '../../../../models/HandBill';
 
-import { Text } from '../../../component/Text/defaultText';
-import { useBrowsedHandbillsStore } from '../../../stores/browsedHandBillStore';
+import { Text } from '../../../../component/Text/defaultText';
+import { useBrowsedHandbillsStore } from '../../../../stores/browsedHandBillStore';
+import MapSection from '../LocationTab/MapSection';
+import ShareSection from '../ShareTab/ShareSection';
 import CommentInput from './CommentInput';
 import CommentsSection, { CommentsSectionHandle } from './CommentsSection';
-import MapSection from './MapSection';
 import MediaCarousel from './MediaCarousel';
-import ShareSection from './ShareTab/ShareSection';
 
 interface HandbillModalProps {
     closeModal: () => void;

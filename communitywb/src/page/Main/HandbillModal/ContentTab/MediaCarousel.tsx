@@ -1,9 +1,9 @@
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Carousel, Image } from 'antd'; // Import Image for PreviewGroup
 import React, { useCallback, useRef, useState } from 'react';
-import LinkButton from '../../../component/Button/LinkButton';
-import styles from '../../../css/HandBillModal/MediaCarousel.module.css';
-import { HandBillMedia } from '../../../models/HandBillMedia';
+import LinkButton from '../../../../component/Button/LinkButton';
+import styles from '../../../../css/HandBillModal/MediaCarousel.module.css';
+import { HandBillMedia } from '../../../../models/HandBillMedia';
 
 interface MediaCarouselProps {
 mediaList: HandBillMedia[];

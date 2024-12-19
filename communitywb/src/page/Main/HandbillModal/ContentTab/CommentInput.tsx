@@ -4,13 +4,12 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Input, Upload, message, } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAddCommentMutation } from '../../../api/Comment/commentQuery';
-import { useHandbillInteractionMutation } from '../../../api/handbill/handBillQuery';
-import { AddCommentDto, AddCommentForm } from '../../../dto/comment/AddCommentDto';
-import { HandbillInteractionType } from '../../../enum/HandbillInteractionType';
-import { useUserStore } from '../../../stores/userStateStore';
-import ConfirmMediaUploadModal from './ConfirmMediaUploadModal'; // Import the component
-
+import { useAddCommentMutation } from '../../../../api/Comment/commentQuery';
+import { useHandbillInteractionMutation } from '../../../../api/handbill/handBillQuery';
+import { AddCommentDto, AddCommentForm } from '../../../../dto/comment/AddCommentDto';
+import { HandbillInteractionType } from '../../../../enum/HandbillInteractionType';
+import { useUserStore } from '../../../../stores/userStateStore';
+import ConfirmMediaUploadModal from './ConfirmMediaUploadModal';
 interface CommentInputProps {
     selectedHandBillId: number;
     onCommentAdded: () => void; // Callback to inform parent that a comment was added

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-import { customIcon } from '../../../component/Icon/HandbillIcon';
-import { useCurrentLocation } from '../../../hooks/useCurrentLocation';
-import { HandBill } from '../../../models/HandBill';
+import { customIcon } from '../../../../component/Icon/HandbillIcon';
+import { useCurrentLocation } from '../../../../hooks/useCurrentLocation';
+import { HandBill } from '../../../../models/HandBill';
 interface MapSectionProps {
 selectedHandBill: HandBill;
 }

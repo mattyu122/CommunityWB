@@ -1,7 +1,7 @@
 // CommentsSection.tsx
 
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Image, List, Spin, Typography } from 'antd';
+import { Avatar, Divider, Image, List, Spin, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import React, {
     useCallback,
@@ -9,10 +9,10 @@ import React, {
     useImperativeHandle,
     useRef
 } from 'react';
-import { useCommentPagesInfiniteQuery } from '../../../api/Comment/commentQuery';
-import styles from "../../../css/HandBillModal/CommentsSection.module.css";
-import { HandBill } from '../../../models/HandBill';
-import { useBrowsedHandbillsStore } from '../../../stores/browsedHandBillStore';
+import { useCommentPagesInfiniteQuery } from '../../../../api/Comment/commentQuery';
+import styles from "../../../../css/HandBillModal/CommentsSection.module.css";
+import { HandBill } from '../../../../models/HandBill';
+import { useBrowsedHandbillsStore } from '../../../../stores/browsedHandBillStore';
 const { Text } = Typography;
 export interface CommentsSectionHandle {
 getCurrentPage: () => number;
@@ -102,7 +102,7 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
                     avatar={<Avatar src={selectedHandBill.user.imageUrl} icon={<UserOutlined/>}/>}
                     title={
                         <div>
-                        <Text mark>{selectedHandBill.user.fullname}</Text>
+                        <Text style={{ color: '#4096ff' }}>{selectedHandBill.user.fullname}</Text>
                         <Text type="secondary" style={{ marginLeft: 8 }}>
                             {formatDistanceToNow(new Date(selectedHandBill.createdAt), { addSuffix: true })}
                         </Text>
@@ -112,17 +112,18 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
                     />
                 </List.Item>
             </List>
+            <Divider style={{ margin: '5px 0' }} />
             <List
                 itemLayout="horizontal"
                 dataSource={allComments}
-                renderItem={(comment) => (
+                renderItem={(comment, index) => (
                     <List.Item key={comment.id}>
                         <List.Item.Meta
                             avatar={<Avatar src={comment.user.imageUrl} icon={<UserOutlined/>}/>}
                             title={
                                 <div>
-                                    {comment.user.id === selectedHandBill.user.id ? 
-                                    <Text mark>{comment.user.fullname}</Text> :
+                                    {comment.user.id === selectedHandBill.user.id ?
+                                    <Text style={{ color: '#4096ff' }}>{comment.user.fullname}</Text> :
                                     <Text strong>{comment.user.fullname}</Text>
                                     }
                                     <Text type="secondary" style={{ marginLeft: 8 }}>
