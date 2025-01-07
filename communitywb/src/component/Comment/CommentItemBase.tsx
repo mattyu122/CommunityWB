@@ -1,23 +1,22 @@
-import { MessageOutlined, PushpinFilled, PushpinOutlined, UserOutlined } from '@ant-design/icons';
+import { PushpinFilled, PushpinOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Image, List, Space, Tooltip, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import React from "react";
-import styles from "../../../../css/HandBillModal/CommentsSection.module.css";
-import { Comment } from '../../../../models/Comment';
-import { HandBill } from '../../../../models/HandBill';
-import { useUserStore } from '../../../../stores/userStateStore';
-
+import styles from "../../css/HandBillModal/CommentsSection.module.css";
+import { useUserStore } from '../../stores/userStateStore';
+import { CommentItemBaseProps } from './CommentWithReplyBehavior';
 const { Text } = Typography;
 
-const CommentItem = React.memo(({ comment, handbill, handlePinComment, handleReplyComment, hoveredCommentId, setHoveredCommentId }: {
-    comment: Comment;
-    handbill: HandBill;
-    handlePinComment?: (comment: Comment) => void;
-    handleReplyComment?: (commentId: number) => void;
-    hoveredCommentId?: number | null;
-    setHoveredCommentId?: (id: number | null) => void;
-}) => {
-
+const CommentItemBase: React.FC<CommentItemBaseProps & {
+    extraAction?: React.ReactNode;
+    }> = ({
+        comment,
+        handbill,
+        handlePinComment,
+        hoveredCommentId,
+        setHoveredCommentId,
+        extraAction,
+    })=> {
     const { user } = useUserStore();
     return (
         <div
@@ -84,13 +83,12 @@ const CommentItem = React.memo(({ comment, handbill, handlePinComment, handleRep
                             </Tooltip>
                         )
                     )}
-                    <Tooltip title="Reply">
-                        <Button shape="circle" icon={<MessageOutlined />} onClick={() => handleReplyComment?.(comment.id)} />
-                    </Tooltip>
+                    {extraAction}
+
                 </div>
             )}
         </div>
     );
-});
+}
 
-export default CommentItem;
+export default CommentItemBase;

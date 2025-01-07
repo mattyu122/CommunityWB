@@ -1,7 +1,7 @@
 // commentQuery.ts
 
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { addComment, getCommentPages, pinComment } from './commentApi';
+import { addComment, getCommentPages, getPinnedCommentPages, pinComment } from './commentApi';
 
 interface CommentQueryParams {
     handbillId: number;
@@ -20,6 +20,23 @@ export const useCommentPagesInfiniteQuery = ({ handbillId, size = 20, enabled = 
     queryKey: ['commentPages', handbillId],
     queryFn: ({ pageParam = 0 }) =>
         getCommentPages({ handbillId, page: pageParam, size }),
+    getNextPageParam: (GetCommentPageDto) => {
+        if (GetCommentPageDto && GetCommentPageDto.currentPage < GetCommentPageDto.totalPages - 1) {
+        return GetCommentPageDto.currentPage + 1;
+        } else {
+        return undefined;
+        }
+    },
+    initialPageParam: 0, // Add this line to specify the initial page parameter
+    enabled,
+    });
+};
+
+export const usePinnedCommentPagesInfiniteQuery = ({ handbillId, size = 20, enabled = true}: CommentQueryParams) => {
+    return useInfiniteQuery({
+    queryKey: ['pinnedCommentPages', handbillId],
+    queryFn: ({ pageParam = 0 }) =>
+        getPinnedCommentPages({ handbillId, page: pageParam, size }),
     getNextPageParam: (GetCommentPageDto) => {
         if (GetCommentPageDto && GetCommentPageDto.currentPage < GetCommentPageDto.totalPages - 1) {
         return GetCommentPageDto.currentPage + 1;

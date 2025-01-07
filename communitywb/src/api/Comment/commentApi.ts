@@ -39,7 +39,7 @@ export const addComment = async (addCommentForm: FormData) => {
     }
 }
 
-export const getPinnedComments = async ({
+export const getPinnedCommentPages = async ({
     handbillId,
     page,
     size = 20,
@@ -51,7 +51,8 @@ export const getPinnedComments = async ({
                 size,
             },
         });
-        const pinnedComments: GetCommentPageDto[] = data;
+        const pinnedComments: GetCommentPageDto = data;
+        console.log('commentPage', pinnedComments);
         return pinnedComments;
     }catch(error){
         console.error('Error fetching pinned comments:', error);

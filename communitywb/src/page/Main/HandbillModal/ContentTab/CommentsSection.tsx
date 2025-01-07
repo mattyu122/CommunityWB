@@ -12,12 +12,13 @@ import React, {
     useState
 } from 'react';
 import { useCommentPagesInfiniteQuery, usePinCommentMutation } from '../../../../api/Comment/commentQuery';
+import CommentItemBase from '../../../../component/Comment/CommentItemBase';
+import { withReplyBehavior } from '../../../../component/Comment/CommentWithReplyBehavior';
 import styles from "../../../../css/HandBillModal/CommentsSection.module.css";
 import { Comment } from '../../../../models/Comment';
 import { HandBill } from '../../../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../../../stores/browsedHandBillStore';
 import { useUserStore } from '../../../../stores/userStateStore';
-import CommentItem from './CommentItem';
 
 const { Text } = Typography;
 
@@ -46,6 +47,7 @@ const commentsReducer = (state: Comment[], action: { type: string; payload: any 
     }
 };
 
+const CommentItemWithReply = withReplyBehavior(CommentItemBase);
 
 const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionProps>(({ selectedHandBill }, ref) => {
     const { getBrowsedHandbillEntry } = useBrowsedHandbillsStore();
@@ -142,7 +144,8 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
         pinComment({ commentId: comment.id, handbillId: comment.handbillId, userId: user.id });
     }, [pinComment, user]);
 
-    const handleReplyComment = useCallback((commentId: number) => {
+    const handleReplyComment = useCallback((comment: Comment) => {
+        console.log('handleReplyComment', comment);
         // Implement reply comment logic here
     }, []);
 
@@ -188,7 +191,16 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
                 dataSource={comments as Comment[]}
                 split={false}
                 renderItem={(comment) => (
-                    <CommentItem
+                    // <CommentItem
+                    //     key={comment.id}
+                    //     comment={comment}
+                    //     handbill={selectedHandBill}
+                    //     handlePinComment={handlePinComment}
+                    //     handleReplyComment={handleReplyComment}
+                    //     hoveredCommentId={HoveredCommentId}
+                    //     setHoveredCommentId={setHoveredCommentId}
+                    // />
+                    <CommentItemWithReply
                         key={comment.id}
                         comment={comment}
                         handbill={selectedHandBill}
