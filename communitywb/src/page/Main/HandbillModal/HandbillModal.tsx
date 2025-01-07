@@ -2,15 +2,16 @@
 
 import { Empty, Modal, Tabs } from 'antd';
 import React, { useCallback, useRef } from 'react';
-import { HandBill } from '../../../../models/HandBill';
+import { HandBill } from '../../../models/HandBill';
 
-import { Text } from '../../../../component/Text/defaultText';
-import { useBrowsedHandbillsStore } from '../../../../stores/browsedHandBillStore';
-import MapSection from '../LocationTab/MapSection';
-import ShareSection from '../ShareTab/ShareSection';
-import CommentInput from './CommentInput';
-import CommentsSection, { CommentsSectionHandle } from './CommentsSection';
-import MediaCarousel from './MediaCarousel';
+import { Text } from '../../../component/Text/defaultText';
+import { useBrowsedHandbillsStore } from '../../../stores/browsedHandBillStore';
+import CommentInput from './ContentTab/CommentInput';
+import CommentsSection, { CommentsSectionHandle } from './ContentTab/CommentsSection';
+import MediaCarousel from './ContentTab/MediaCarousel';
+import MapSection from './LocationTab/MapSection';
+import ImportantNotes from './PinnedNotesTab/PinnedNotes';
+import ShareSection from './ShareTab/ShareSection';
 
 interface HandbillModalProps {
     closeModal: () => void;
@@ -68,9 +69,11 @@ const HandbillModal: React.FC<HandbillModalProps> = ({ closeModal, selectedHandB
             ),
         },
         {
-            label: 'Important notes',
+            label: 'Pinned',
             key: '2',
-            children: <Empty description={<Text>No important notes</Text>} />,
+            children: selectedHandBill ?
+                        <ImportantNotes selectedHandBill={selectedHandBill} /> :
+                        <Empty description={<Text>No Pinned Notes</Text>} />,
         },
         {
             label: 'Location',

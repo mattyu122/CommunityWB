@@ -8,7 +8,7 @@ import { HandBill } from '../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../stores/browsedHandBillStore';
 import { useUserStore } from '../../stores/userStateStore';
 import HandBillComponent from './HandbillComponent';
-import HandbillModal from './HandbillModal/ContentTab/HandbillModal';
+import HandbillModal from './HandbillModal/HandbillModal';
 
 interface HandbillLayerProps {
     boardList: Board[];

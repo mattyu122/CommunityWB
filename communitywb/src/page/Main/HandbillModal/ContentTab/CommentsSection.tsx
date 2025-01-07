@@ -1,40 +1,61 @@
 // CommentsSection.tsx
 
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Divider, Image, List, Spin, Typography } from 'antd';
+import { Avatar, Image, List, message, Spin, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import React, {
     useCallback,
     useEffect,
     useImperativeHandle,
-    useRef
+    useReducer,
+    useRef,
+    useState
 } from 'react';
-import { useCommentPagesInfiniteQuery } from '../../../../api/Comment/commentQuery';
+import { useCommentPagesInfiniteQuery, usePinCommentMutation } from '../../../../api/Comment/commentQuery';
 import styles from "../../../../css/HandBillModal/CommentsSection.module.css";
+import { Comment } from '../../../../models/Comment';
 import { HandBill } from '../../../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../../../stores/browsedHandBillStore';
+import { useUserStore } from '../../../../stores/userStateStore';
+import CommentItem from './CommentItem';
+
 const { Text } = Typography;
+
 export interface CommentsSectionHandle {
-getCurrentPage: () => number;
-getScrollPosition: () => number;
+    getCurrentPage: () => number;
+    getScrollPosition: () => number;
 }
 
 interface CommentsSectionProps {
-selectedHandBill: HandBill;
+    selectedHandBill: HandBill;
 }
+
+// Reducer function to manage comments state
+const commentsReducer = (state: Comment[], action: { type: string; payload: any }) => {
+    switch (action.type) {
+        case 'SET_COMMENTS':
+            return action.payload;
+        case 'TOGGLE_PIN':
+            return state.map((comment) =>
+                comment.id === action.payload.id
+                    ? { ...comment, pinned: !comment.pinned }
+                    : comment
+            );
+        default:
+            return state;
+    }
+};
+
 
 const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionProps>(({ selectedHandBill }, ref) => {
     const { getBrowsedHandbillEntry } = useBrowsedHandbillsStore();
+    const { user } = useUserStore();
     const entry = getBrowsedHandbillEntry(selectedHandBill.id);
     const commentsRef = useRef<HTMLDivElement>(null);
     const scrollPositionSet = useRef(false);
-    // Expose internal commentsRef methods to HandbillModal
-    useImperativeHandle(ref, () => ({
-        getCurrentPage: () => {
-        return data?.pages.length ? data.pages.length - 1 : 0;
-        },
-        getScrollPosition: () => commentsRef.current?.scrollTop || 0,
-    }));
+    const [HoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
+    const { mutate: pinComment, isSuccess: pinSuccess, data: pinData } = usePinCommentMutation();
+    const [comments, dispatch] = useReducer(commentsReducer, [] as Comment[]);
 
     // Fetch comments using the infinite query hook
     const {
@@ -48,37 +69,56 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
         enabled: true,
     });
 
+    // Expose internal commentsRef methods to HandbillModal
+    useImperativeHandle(ref, () => ({
+        getCurrentPage: () => {
+            return data?.pages.length ? data.pages.length - 1 : 0;
+        },
+        getScrollPosition: () => commentsRef.current?.scrollTop || 0,
+    }));
+
     // Flatten all pages of comments into a single array
-    const allComments = React.useMemo(() => {
-        return data
-        ? data.pages.flatMap((page) => page?.comments || [])
-        : [];
+    useEffect(() => {
+        if (data) {
+            const flattenedComments = data.pages.flatMap((page) => page?.comments || []);
+            dispatch({ type: 'SET_COMMENTS', payload: flattenedComments });
+        }
     }, [data]);
 
     // Set scroll position after comments are loaded
     useEffect(() => {
         if (
-        entry &&
-        commentsRef.current &&
-        !scrollPositionSet.current &&
-        allComments.length > 0
+            entry &&
+            commentsRef.current &&
+            !scrollPositionSet.current &&
+            comments.length > 0
         ) {
-        commentsRef.current.scrollTop = entry.scrollPosition || 0;
-        scrollPositionSet.current = true;
+            commentsRef.current.scrollTop = entry.scrollPosition || 0;
+            scrollPositionSet.current = true;
         }
-    }, [allComments, entry]);
+    }, [comments, entry]);
+
+    useEffect(() => {
+        if (pinSuccess) {
+            if (pinData.pinned) {
+                message.success('Pinned comment');
+            } else {
+                message.success('Unpinned comment');
+            }
+        }
+    }, [pinSuccess]);
 
     /** Handle scroll for infinite loading */
     const handleScroll = useCallback(() => {
         if (commentsRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
-        if (
-            scrollTop + clientHeight >= scrollHeight - 100 &&
-            hasNextPage &&
-            !isFetchingNextPage
-        ) {
-            fetchNextPage();
-        }
+            const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
+            if (
+                scrollTop + clientHeight >= scrollHeight - 100 &&
+                hasNextPage &&
+                !isFetchingNextPage
+            ) {
+                fetchNextPage();
+            }
         }
     }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
@@ -93,66 +133,73 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
         };
         loadPages();
     }, [entry, fetchNextPage, data?.pages.length]);
+
+    const handlePinComment = useCallback((comment: Comment) => {
+        if (!user) {
+            return;
+        }
+        dispatch({ type: 'TOGGLE_PIN', payload: { id: comment.id } });
+        pinComment({ commentId: comment.id, handbillId: comment.handbillId, userId: user.id });
+    }, [pinComment, user]);
+
+    const handleReplyComment = useCallback((commentId: number) => {
+        // Implement reply comment logic here
+    }, []);
+
     return (
         <div onScroll={handleScroll} ref={commentsRef} style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
             {/* Handbill Caption as a List */}
             <List itemLayout="horizontal">
-                <List.Item key={selectedHandBill.id}>
-                    <List.Item.Meta
-                    avatar={<Avatar src={selectedHandBill.user.imageUrl} icon={<UserOutlined/>}/>}
-                    title={
-                        <div>
-                        <Text style={{ color: '#4096ff' }}>{selectedHandBill.user.fullname}</Text>
-                        <Text type="secondary" style={{ marginLeft: 8 }}>
-                            {formatDistanceToNow(new Date(selectedHandBill.createdAt), { addSuffix: true })}
-                        </Text>
-                        </div>
-                    }
-                    description={<Text>{selectedHandBill.caption}</Text>}
-                    />
-                </List.Item>
-            </List>
-            <Divider style={{ margin: '5px 0' }} />
-            <List
-                itemLayout="horizontal"
-                dataSource={allComments}
-                renderItem={(comment, index) => (
-                    <List.Item key={comment.id}>
+                <div style={{ position: 'relative', padding: '10px 10px 10px 10px' }}>
+                    <List.Item key={selectedHandBill.id}>
                         <List.Item.Meta
-                            avatar={<Avatar src={comment.user.imageUrl} icon={<UserOutlined/>}/>}
+                            avatar={<Avatar src={selectedHandBill.user.imageUrl} icon={<UserOutlined />} />}
                             title={
                                 <div>
-                                    {comment.user.id === selectedHandBill.user.id ?
-                                    <Text style={{ color: '#4096ff' }}>{comment.user.fullname}</Text> :
-                                    <Text strong>{comment.user.fullname}</Text>
-                                    }
+                                    <Text style={{ color: '#4096ff' }}>{selectedHandBill.user.fullname}</Text>
                                     <Text type="secondary" style={{ marginLeft: 8 }}>
-                                        {formatDistanceToNow(new Date(comment.createdAt), {addSuffix: true})}
+                                        {formatDistanceToNow(new Date(selectedHandBill.createdAt), { addSuffix: true })}
                                     </Text>
                                 </div>
                             }
                             description={
-                                    <div>
-                                        <div className={styles.commentMediaContainer}>
-                                            {comment.commentMedia &&
+                                <div>
+                                    <div className={styles.commentMediaContainer}>
+                                        {selectedHandBill.handbillMedia && (
                                             <Image.PreviewGroup>
-                                                {
-                                                    comment.commentMedia.map((media,index) => (
-                                                        <div className={styles.commentMedia} key={media.mediaUrl || index}>
-                                                            <Image src={media.mediaUrl} alt="Full Size"/>
-                                                        </div>
-                                                    ))
-                                                }
+                                                {selectedHandBill.handbillMedia.map((media, index) => (
+                                                    <div className={styles.commentMedia} key={media.mediaUrl || index}>
+                                                        <Image src={media.mediaUrl} alt="Full Size" />
+                                                    </div>
+                                                ))}
                                             </Image.PreviewGroup>
-                                            }
-                                        </div>
-                                        <Text>{comment.content}</Text>
+                                        )}
                                     </div>
+                                    <Text>{selectedHandBill.caption}</Text>
+                                </div>
                             }
                         />
                     </List.Item>
+                </div>
+            </List>
+
+            <List
+                itemLayout="horizontal"
+                dataSource={comments as Comment[]}
+                split={false}
+                renderItem={(comment) => (
+                    <CommentItem
+                        key={comment.id}
+                        comment={comment}
+                        handbill={selectedHandBill}
+                        handlePinComment={handlePinComment}
+                        handleReplyComment={handleReplyComment}
+                        hoveredCommentId={HoveredCommentId}
+                        setHoveredCommentId={setHoveredCommentId}
+                    />
                 )}
             />
+
             {(isFetching || isFetchingNextPage) && (
                 <div style={{ textAlign: 'center', padding: '10px 0' }}>
                     <Spin tip="Loading more comments..." />
@@ -160,7 +207,6 @@ const CommentsSection = React.forwardRef<CommentsSectionHandle, CommentsSectionP
             )}
         </div>
     );
-    }
-);
+});
 
 export default React.memo(CommentsSection);

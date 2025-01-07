@@ -11,3 +11,7 @@
     object-fit: contain;
     cursor:pointer;
 }
+
+.commentItem:hover{
+    background-color: rgb(239, 239, 239);
+}

@@ -6,7 +6,7 @@ export interface Comment {
     content: string;
     createdAt: string;
     user: User;
-    handBillId: number;
+    handbillId: number;
     commentMedia: CommentMedia[]; // Optional media attachments for the comment
-    replies: Comment[]; // Array of replies, allowing for nested comments
+    pinned: boolean;
 }
