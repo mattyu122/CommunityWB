@@ -22,7 +22,6 @@ export const getCommentPages = async ({
             },
         });
         const commentPage: GetCommentPageDto = data;
-        console.log('commentPage', commentPage);
         return commentPage;
     }catch(error){
 
@@ -52,7 +51,6 @@ export const getPinnedCommentPages = async ({
             },
         });
         const pinnedComments: GetCommentPageDto = data;
-        console.log('commentPage', pinnedComments);
         return pinnedComments;
     }catch(error){
         console.error('Error fetching pinned comments:', error);

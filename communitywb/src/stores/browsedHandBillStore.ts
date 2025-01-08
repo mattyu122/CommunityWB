@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 
+/** Represents a browsed Handbill entry with pagination & scroll info. */
 interface BrowsedHandbillEntry {
   id: number;
-  timestamp: number;
-  lastSeenPage: number;
-  scrollPosition: number;
+  timestamp: number;        // Time when the entry was created/updated
+  lastSeenPage: number;     // Last page the user viewed
+  scrollPosition: number;   // Scroll offset the user was at
 }
 
 interface BrowsedHandbillsState {
@@ -14,12 +15,13 @@ interface BrowsedHandbillsState {
 }
 
 export const useBrowsedHandbillsStore = create<BrowsedHandbillsState>((set, get) => {
-  const EXPIRY_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+  // Define the time period (3 days in milliseconds)
+  const EXPIRY_DURATION = 24 * 60 * 60 * 1000;
 
-  // Load and clean up initial data from localStorage
   const storedData = localStorage.getItem('browsedHandbills');
   let initialBrowsedHandbills: BrowsedHandbillEntry[] = storedData ? JSON.parse(storedData) : [];
 
+  // Filter out entries older than 3 days
   const now = Date.now();
   initialBrowsedHandbills = initialBrowsedHandbills.filter(
     (entry) => now - entry.timestamp < EXPIRY_DURATION
@@ -29,20 +31,27 @@ export const useBrowsedHandbillsStore = create<BrowsedHandbillsState>((set, get)
 
   return {
     browsedHandbills: initialBrowsedHandbills,
+
     addBrowsedHandbill: (id, lastSeenPage, scrollPosition) =>
       set((state) => {
         const now = Date.now();
 
-        let updatedBrowsedHandbills = state.browsedHandbills.filter(
+        const updatedBrowsedHandbills = state.browsedHandbills.filter(
           (entry) => now - entry.timestamp < EXPIRY_DURATION && entry.id !== id
         );
 
-        updatedBrowsedHandbills.push({ id, timestamp: now, lastSeenPage, scrollPosition });
+        updatedBrowsedHandbills.push({
+          id,
+          timestamp: now,
+          lastSeenPage,
+          scrollPosition,
+        });
 
         localStorage.setItem('browsedHandbills', JSON.stringify(updatedBrowsedHandbills));
 
         return { browsedHandbills: updatedBrowsedHandbills };
       }),
+
     getBrowsedHandbillEntry: (id) => {
       const state = get();
       return state.browsedHandbills.find((entry) => entry.id === id);

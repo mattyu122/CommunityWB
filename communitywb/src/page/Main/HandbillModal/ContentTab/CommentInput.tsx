@@ -8,14 +8,14 @@ import { useAddCommentMutation } from '../../../../api/Comment/commentQuery';
 import { useHandbillInteractionMutation } from '../../../../api/handbill/handBillQuery';
 import { AddCommentDto, AddCommentForm } from '../../../../dto/comment/AddCommentDto';
 import { HandbillInteractionType } from '../../../../enum/HandbillInteractionType';
+import { HandBill } from '../../../../models/HandBill';
 import { useUserStore } from '../../../../stores/userStateStore';
 import ConfirmMediaUploadModal from './ConfirmMediaUploadModal';
 interface CommentInputProps {
-    selectedHandBillId: number;
-    onCommentAdded: () => void; // Callback to inform parent that a comment was added
+    selectedHandBill: HandBill;
 }
 
-const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onCommentAdded,}) => {
+const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBill,}) => {
     const [commentText, setCommentText] = useState<string>('');
     const [uploadedFileList, setUploadedFileList] = useState<RcFile[]>([]);
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
@@ -75,13 +75,13 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onComme
             content: trimCommentText,
             mediaFiles: uploadedFileList,
             userId: user.id,
-            handbillId: selectedHandBillId,
+            handbillId: selectedHandBill.id,
             parentId: null,
         };
         const formData = AddCommentForm.toFormData(addCommentDto);
         addComment(formData);
-        addHandBillInteraction({handbillId: selectedHandBillId, userId: user.id, interactionType: HandbillInteractionType.COMMENT});
-    }, [commentText, uploadedFileList, user, selectedHandBillId, addComment, addHandBillInteraction]);
+        addHandBillInteraction({handbillId: selectedHandBill.id, userId: user.id, interactionType: HandbillInteractionType.COMMENT});
+    }, [commentText, uploadedFileList, user, selectedHandBill, addComment, addHandBillInteraction]);
 
     /** Handle closing the confirm upload modal */
     const handleCloseConfirmModal = useCallback(() => {
@@ -101,7 +101,6 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onComme
     /** Notify parent component when a comment is successfully added */
     useEffect(() => {
         if (isSuccess) {
-            onCommentAdded();
             messageApi.open({
                 type: 'success',
                 content: 'Comment post successfully',
@@ -111,7 +110,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBillId, onComme
             setCommentText('');
             setIsConfirmModalVisible(false); // Close the modal after confirming
         }
-    }, [isSuccess, onCommentAdded, messageApi]);
+    }, [isSuccess, messageApi]);
 
     /** Memoize the upload button to prevent re-renders */
     const uploadButton = useMemo(

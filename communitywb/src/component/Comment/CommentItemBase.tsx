@@ -1,21 +1,26 @@
-import { PushpinFilled, PushpinOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Image, List, Space, Tooltip, Typography } from 'antd';
+import { PushpinFilled, UserOutlined } from '@ant-design/icons';
+import { Avatar, Image, List, Space, Typography } from 'antd';
 import { formatDistanceToNow } from 'date-fns';
 import React from "react";
 import styles from "../../css/HandBillModal/CommentsSection.module.css";
+import { Comment } from '../../models/Comment';
+import { HandBill } from '../../models/HandBill';
 import { useUserStore } from '../../stores/userStateStore';
-import { CommentItemBaseProps } from './CommentWithReplyBehavior';
 const { Text } = Typography;
 
-const CommentItemBase: React.FC<CommentItemBaseProps & {
-    extraAction?: React.ReactNode;
-    }> = ({
+export interface CommentItemBaseProps {
+    comment: Comment;
+    handbill: HandBill;
+    hoveredCommentId?: number | null;
+    setHoveredCommentId?: (id: number | null) => void;
+    extraActions?: React.ReactNode;
+}
+
+const CommentItemBase: React.FC<CommentItemBaseProps> = ({
         comment,
-        handbill,
-        handlePinComment,
         hoveredCommentId,
         setHoveredCommentId,
-        extraAction,
+        extraActions
     })=> {
     const { user } = useUserStore();
     return (
@@ -72,18 +77,7 @@ const CommentItemBase: React.FC<CommentItemBaseProps & {
                         gap: '8px',
                     }}
                 >
-                    {user?.id === handbill.user.id && (
-                        comment.pinned ? (
-                            <Tooltip title="Unpin">
-                                <Button shape="circle" icon={<PushpinFilled />} onClick={() => handlePinComment?.(comment)} />
-                            </Tooltip>
-                        ) : (
-                            <Tooltip title="Pin">
-                                <Button shape="circle" icon={<PushpinOutlined />} onClick={() => handlePinComment?.(comment)} />
-                            </Tooltip>
-                        )
-                    )}
-                    {extraAction}
+                    {extraActions}
 
                 </div>
             )}

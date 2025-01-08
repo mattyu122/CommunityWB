@@ -2,6 +2,7 @@ import { List, message } from "antd";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { usePinCommentMutation, usePinnedCommentPagesInfiniteQuery } from "../../../../api/Comment/commentQuery";
 import CommentItemBase from "../../../../component/Comment/CommentItemBase";
+import { withPinBehavior } from "../../../../component/Comment/CommentWithPinBehavior";
 import { Comment } from '../../../../models/Comment';
 import { HandBill } from "../../../../models/HandBill";
 import { useUserStore } from "../../../../stores/userStateStore";
@@ -9,6 +10,8 @@ import { useUserStore } from "../../../../stores/userStateStore";
 interface ImportantNotesProps {
     selectedHandBill: HandBill;
 }
+
+const CommentItemWithPin = withPinBehavior(CommentItemBase);
 
 // Reducer function to manage comments state
 const commentsReducer = (state: Comment[], action: { type: string; payload: any }) => {
@@ -77,7 +80,7 @@ const ImportantNotes: React.FC<ImportantNotesProps> = ({selectedHandBill}) => {
                 dataSource={comments as Comment[]}
                 split={false}
                 renderItem={(comment) => (
-                    <CommentItemBase
+                    <CommentItemWithPin
                         key={comment.id}
                         comment={comment}
                         handbill={selectedHandBill}
