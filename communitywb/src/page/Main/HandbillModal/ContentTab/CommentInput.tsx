@@ -6,9 +6,11 @@ import { RcFile } from 'antd/es/upload';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAddCommentMutation } from '../../../../api/Comment/commentQuery';
 import { useHandbillInteractionMutation } from '../../../../api/handbill/handBillQuery';
+import { HandbillInteractionType } from '../../../../data/enum/HandbillInteractionType';
+import { MediaPreview } from '../../../../data/interface/MediaPreview';
 import { AddCommentDto, AddCommentForm } from '../../../../dto/comment/AddCommentDto';
-import { HandbillInteractionType } from '../../../../enum/HandbillInteractionType';
 import { HandBill } from '../../../../models/HandBill';
+import { useCommentMediaUploadStore } from '../../../../stores/createCommentMediaFormStore';
 import { useUserStore } from '../../../../stores/userStateStore';
 import ConfirmMediaUploadModal from './ConfirmMediaUploadModal';
 interface CommentInputProps {
@@ -17,14 +19,14 @@ interface CommentInputProps {
 
 const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBill,}) => {
     const [commentText, setCommentText] = useState<string>('');
-    const [uploadedFileList, setUploadedFileList] = useState<RcFile[]>([]);
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
-    const [commentMediaPreview, setCommentMediaPreview] = useState<string[]>([]);
+    // const [commentMediaPreview, setCommentMediaPreview] = useState<CommentMediaPreview[]>([]);
     const [messageApi, contextHolder] = message.useMessage();
 
     const { user } = useUserStore();
-    const { mutate: addComment, isSuccess } = useAddCommentMutation();
+    const { mutate: addComment} = useAddCommentMutation();
     const { mutate: addHandBillInteraction,} = useHandbillInteractionMutation();
+    const {commentMediaPreview, setCommentMedia, uploadedFiles, clearCommentMedia} = useCommentMediaUploadStore();
     /** Handle text change */
     const handleTextChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -38,79 +40,91 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBill,}) => {
     /** Handle file uploads */
     const handleFileChange = useCallback(
         (newFiles: RcFile[]) => {
-            const beforeUpload = (file: RcFile) => (file.type.startsWith('image/') || file.type.startsWith('video/'));
-            const validFiles: RcFile[] = [];
-            const previews: string[] = [];
-
-            newFiles.forEach((file) => {
-                if (beforeUpload(file)) {
-                    validFiles.push(file);
-                    const preview = URL.createObjectURL(file);
-                    (file as any).preview = preview; // Attach preview to file
-                    previews.push(preview);
-                }else{
-                    message.error('You can only upload image or video files!');
-                }
-            });
-
-            if (validFiles.length > 0) {
-                setUploadedFileList((prevFiles) => [...prevFiles, ...validFiles]);
-                setCommentMediaPreview((prevPreviews) => [...prevPreviews, ...previews]);
-                setIsConfirmModalVisible(true); // Open the modal only if there are valid files
-            }
+            const updatedPreviews: MediaPreview[] = newFiles.map((file) => ({
+                url: URL.createObjectURL(file),
+                type: file.type.startsWith('image/') ? 'image' : 'video',
+            }));
+            const newAllPreviews = [...commentMediaPreview, ...updatedPreviews];
+            const newAllFiles = [...(uploadedFiles || []), ...newFiles];
+            setCommentMedia(newAllPreviews, newAllFiles);
+            setIsConfirmModalVisible(newAllPreviews.length > 0);
         },
-        []
+        [commentMediaPreview, setCommentMedia, uploadedFiles]
     );
 
-    /** Handle confirm upload */
     const handleConfirmUpload = useCallback(() => {
         if (!user) {
             message.error('You must be logged in to comment');
             return;
         }
         const trimCommentText = commentText.trim();
-        if (!trimCommentText && uploadedFileList.length === 0) return; // Prevent empty submissions
+        if (!trimCommentText &&uploadedFiles && uploadedFiles.length === 0) {
+            return; // Prevent empty submissions
+        }
+
+        // 1) Close the modal FIRST
+        setIsConfirmModalVisible(false);
+
+        // 2) Show "uploading" message
+        const messageKey = 'commentUpload';
+        messageApi.open({
+            key: messageKey,
+            type: 'loading',
+            content: 'Your comment is uploading...',
+            duration: 0, // Set duration to 0 to make it persist
+        });
 
         const addCommentDto: AddCommentDto = {
             content: trimCommentText,
-            mediaFiles: uploadedFileList,
+            mediaFiles: uploadedFiles,
             userId: user.id,
             handbillId: selectedHandBill.id,
             parentId: null,
         };
         const formData = AddCommentForm.toFormData(addCommentDto);
-        addComment(formData);
-        addHandBillInteraction({handbillId: selectedHandBill.id, userId: user.id, interactionType: HandbillInteractionType.COMMENT});
-    }, [commentText, uploadedFileList, user, selectedHandBill, addComment, addHandBillInteraction]);
+
+        // 3) Call the mutation with onSuccess/onError so we can update the message
+        addComment(formData, {
+            onSuccess: () => {
+                messageApi.open({
+                    key: messageKey,
+                    type: 'success',
+                    content: 'Comment post successfully',
+                })
+                clearCommentMedia();
+                setCommentText('');
+                setIsConfirmModalVisible(false); // Close the modal after confirming
+            },
+            onError: () => {
+            messageApi.open({
+                key: messageKey,
+                type: 'error',
+                content: 'Failed to post comment!',
+            });
+            },
+        });
+
+        // Record this as an interaction
+        addHandBillInteraction({
+            handbillId: selectedHandBill.id,
+            userId: user.id,
+            interactionType: HandbillInteractionType.COMMENT,
+        });
+    }, [user, commentText, messageApi, uploadedFiles, selectedHandBill.id, addComment, addHandBillInteraction, clearCommentMedia]);
 
     /** Handle closing the confirm upload modal */
     const handleCloseConfirmModal = useCallback(() => {
-        setUploadedFileList([]);
-        setCommentMediaPreview([]);
+        clearCommentMedia();
         setIsConfirmModalVisible(false);
 
-    }, []);
+    }, [clearCommentMedia, setIsConfirmModalVisible]);
 
     /** Cleanup object URLs to prevent memory leaks */
     useEffect(() => {
         return () => {
-            uploadedFileList.forEach((file) => URL.revokeObjectURL((file as any).preview));
+            uploadedFiles?.forEach((file) => URL.revokeObjectURL((file as any).preview));
         };
     }, []);
-
-    /** Notify parent component when a comment is successfully added */
-    useEffect(() => {
-        if (isSuccess) {
-            messageApi.open({
-                type: 'success',
-                content: 'Comment post successfully',
-            })
-            setUploadedFileList([]);
-            setCommentMediaPreview([]);
-            setCommentText('');
-            setIsConfirmModalVisible(false); // Close the modal after confirming
-        }
-    }, [isSuccess, messageApi]);
 
     /** Memoize the upload button to prevent re-renders */
     const uploadButton = useMemo(
@@ -119,7 +133,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBill,}) => {
             multiple
             beforeUpload={()=>false}
             showUploadList={false}
-            fileList={uploadedFileList}
+            fileList={uploadedFiles || []}
             onChange={({ fileList }) => {
                 const newFiles = fileList
                 .map((file) => file.originFileObj as RcFile)
@@ -130,7 +144,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBill,}) => {
         <Button shape='circle' icon={<PlusOutlined />} style={{ marginRight: '10px' }}/>
         </Upload>
     ),
-    [handleFileChange]
+    [handleFileChange, uploadedFiles]
     );
 
     return (
@@ -161,7 +175,6 @@ const CommentInput: React.FC<CommentInputProps> = ({ selectedHandBill,}) => {
         {/* Use ConfirmMediaUploadModal */}
         <ConfirmMediaUploadModal
             isVisible={isConfirmModalVisible}
-            mediaPreview={commentMediaPreview}
             onClose={handleCloseConfirmModal}
             uploadButton={uploadButton}
             onConfirm={handleConfirmUpload}

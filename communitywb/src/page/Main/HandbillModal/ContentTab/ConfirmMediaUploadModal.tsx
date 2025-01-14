@@ -1,12 +1,12 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Carousel, Modal } from "antd";
+import { Button, Carousel, Image, Modal } from "antd";
 import React, { useRef, useState } from "react";
 import LinkButton from "../../../../component/Button/LinkButton";
 import styles from "../../../../css/HandBillModal/ConfirmMediaUploadModal.module.css";
+import { useCommentMediaUploadStore } from "../../../../stores/createCommentMediaFormStore";
 
 interface ConfirmModalProps {
 isVisible: boolean;
-mediaPreview: string[];
 onClose: () => void;
 uploadButton: React.ReactNode;
 onConfirm: () => void; // Add onConfirm prop
@@ -14,13 +14,13 @@ onConfirm: () => void; // Add onConfirm prop
 
 const ConfirmMediaUploadModal: React.FC<ConfirmModalProps> = ({
 isVisible,
-mediaPreview,
 onClose,
 uploadButton,
 onConfirm, // Destructure onConfirm
 }) => {
 const confirmCarouselRef = useRef<any>(null);
 const [currentPreviewImageIndex, setCurrentPreviewImageIndex] = useState(0);
+const {commentMediaPreview} = useCommentMediaUploadStore();
 
 const confirmGoToNext = () => {
 confirmCarouselRef.current?.next();
@@ -37,7 +37,7 @@ setCurrentPreviewImageIndex(index);
 return (
 <Modal open={isVisible} onCancel={onClose} footer={null} width="60vw">
     <div className={styles.carouselContainer}>
-        {mediaPreview.length > 0 && (
+        {commentMediaPreview.length > 0 && (
             <>
             {currentPreviewImageIndex > 0 && (
                 <LinkButton
@@ -50,26 +50,35 @@ return (
                 ref={confirmCarouselRef}
                 infinite={false}
                 afterChange={setConfirmCarouselAfterChange}
+                swipe
+                draggable
             >
-                {mediaPreview.map((fileUrl, index) => (
+                {commentMediaPreview.map((file, index) => (
                 <div key={index} className={styles.carouselItem}>
-                    {fileUrl.endsWith(".mp4") ? (
+                    {file.type === "video" ? (
                     <video
-                        src={fileUrl}
-                        controls
-                        style={{ maxWidth: "100%", maxHeight: "100%" }}
+                        autoPlay   // Make it autoplay
+                        muted      // Required by most browsers for autoplay
+                        controls   // Optional — if you still want visible controls
+                        loop         // Optional, if you want it to repeat
+                        src={file.url}
+                        className={styles.reviewImg}
+
+
                     />
                     ) : (
-                    <img
-                        className={styles.reviewImg}
-                        src={fileUrl}
+                    <Image
+                        height= "50vh"
+                        width= "100%"
+                        style={{ objectFit: 'contain' }}
+                        src={file.url}
                         alt={`Media ${index}`}
                     />
                     )}
                 </div>
                 ))}
             </Carousel>
-            {currentPreviewImageIndex < mediaPreview.length - 1 && (
+            {currentPreviewImageIndex < commentMediaPreview.length - 1 && (
                 <LinkButton
                 className={`${styles.arrow} ${styles.rightArrow}`}
                 icon={<RightOutlined />}

@@ -25,12 +25,25 @@ const HandBillComponent = ({ handBill, onClickHandBillHandler, isBrowsed }: Hand
             
         >
             {handBill.handbillMedia.length > 0 && (
-                <img
-                    src={handBill.handbillMedia[0].mediaUrl}
-                    alt={`Caption: ${handBill.caption}`}
-                    className={`${styles.handbillimage}`}
-                    style={{ width: handBill.width, height: handBill.height }}
+                handBill.handbillMedia[0].mediaType === 'video' ?
+                (
+                    <video
+                        src={handBill.handbillMedia[0].mediaUrl}
+                        autoPlay   // Make it autoplay
+                        muted      // Required by most browsers for autoplay
+                        controls   // Optional — if you still want visible controls
+                        loop         // Optional, if you want it to repeat
+                        className={styles.handbillimage}
+                        style={{ width: handBill.width, height: handBill.height }}
+                    />
+                ):(
+                    <img
+                        src={handBill.handbillMedia[0].mediaUrl}
+                        alt={`Caption: ${handBill.caption}`}
+                        className={`${styles.handbillimage}`}
+                        style={{ width: handBill.width, height: handBill.height }}
                 />
+                )
             )}
         </Card>
     );

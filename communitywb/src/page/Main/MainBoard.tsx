@@ -1,5 +1,6 @@
+import { FileAddOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
-import { Divider, Spin } from 'antd';
+import { Divider, FloatButton, Modal, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHandbillPagesInfiniteQuery } from '../../api/handbill/handBillQuery';
 import styles from '../../css/MainBoard.module.css';
@@ -9,8 +10,11 @@ import { useLocationStore } from '../../stores/locationStore';
 import { processHandBills } from '../../utils/handbillProcessing';
 import HandbillLayer from './HandbillLayer';
 import LocationMap from './LocationMap';
+import UploadBillModal from './UploadBillModal/UploadBillModal';
 
 const MainBoard = () => {
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
     const [boardList, setBoardList] = useState<Board[]>([]);
     const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Track overflow state
     const handbillContainerRef = useRef<HTMLDivElement | null>(null);
@@ -25,6 +29,30 @@ const MainBoard = () => {
     const prevLocationRef = useRef(location);
     const prevRadiusRef = useRef(radius);
     const queryClient = useQueryClient();
+
+    const onUploadBillClose = useCallback((finishedUpload: boolean) => {
+        if (finishedUpload) {
+            // Close the modal
+            setIsModalOpen(false);
+        } else {
+            // Show confirmation dialog
+            Modal.confirm({
+                title: 'Discard Upload?',
+                content: 'Are you sure you want to discard your upload? Your progress will be lost.',
+                okText: 'Yes, Discard',
+                cancelText: 'Cancel',
+                onOk: () => {
+                    // User confirmed, close the modal
+                    setIsModalOpen(false);
+                },
+            });
+        }
+    }, []);
+
+    const showUploadBillModal = useCallback(() => {
+        setIsModalOpen(true);
+    }, []);
+    
     const {
         data,
         isFetching,
@@ -145,7 +173,10 @@ const MainBoard = () => {
                         </div>
                     )}
                 </div>
+                <FloatButton icon={<FileAddOutlined />} onClick={showUploadBillModal} />
             </div>
+            <UploadBillModal isOpen={isModalOpen} onClose={onUploadBillClose} />
+
         </div>
     );
 };

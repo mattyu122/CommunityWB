@@ -54,9 +54,22 @@ const CommentItemBase: React.FC<CommentItemBaseProps> = ({
                                 {comment.commentMedia && (
                                     <Image.PreviewGroup>
                                         {comment.commentMedia.map((media, index) => (
-                                            <div className={styles.commentMedia} key={media.mediaUrl || index}>
-                                                <Image src={media.mediaUrl} alt="Full Size" />
-                                            </div>
+                                            media.mediaType === 'video' ?
+                                            (
+                                                <video
+                                                    src={media.mediaUrl}
+                                                    autoPlay   // Make it autoplay
+                                                    muted      // Required by most browsers for autoplay
+                                                    controls   // Optional — if you still want visible controls
+                                                    loop         // Optional, if you want it to repeat
+                                                    className={styles.commentMedia}
+                                                />
+                                            ):
+                                            (
+                                                <div className={styles.commentMedia} key={media.mediaUrl || index}>
+                                                    <Image src={media.mediaUrl} alt="Full Size" />
+                                                </div>
+                                            )
                                         ))}
                                     </Image.PreviewGroup>
                                 )}

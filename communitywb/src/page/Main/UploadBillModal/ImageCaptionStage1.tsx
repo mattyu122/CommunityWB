@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import LinkButton from '../../../component/Button/LinkButton';
 import styles from '../../../css/UploadHandBillModal/ImageCaptionStage1.module.css';
+import { MediaPreview } from '../../../data/interface/MediaPreview';
 import { useUploadBillStore } from '../../../stores/createHandBillFormStore';
 
 const ImageCaptionStage1: React.FC = () => {
@@ -20,22 +21,30 @@ const ImageCaptionStage1: React.FC = () => {
 
     const { register, formState: { errors } } = useForm();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [uploadFileList, setUploadFileList] = useState<RcFile[]>([]);
 
+
+    const isVideoFile = (file: RcFile) => file.type.startsWith('video');
+
+    // Example: No functional updater
     const handleFileChange = (newFiles: RcFile[]) => {
-        const allFiles = [...uploadFileList, ...newFiles]
-        const newPreviews = allFiles.map((file) => URL.createObjectURL(file));
-        setUploadFileList(allFiles);
-        setImagePreview(newPreviews);
-        setFile(allFiles);
-        setCurrentImageIndex(0); // Reset to the first image on file change
+
+        // Build new MediaPreview objects
+        const updatedPreviews: MediaPreview[] = newFiles.map((file) => ({
+        url: URL.createObjectURL(file),
+        type: isVideoFile(file) ? 'video' : 'image',
+        }));
+    
+        const safePrev = imagePreview ?? [];
+        const newAllPreviews = [...safePrev, ...updatedPreviews];
+        console.log(newAllPreviews);
+        setFile(newFiles);
+        setImagePreview(newAllPreviews);
     };
 
     const clearFile = () => {
         setFile(null);
         setImagePreview(null);
         setCurrentImageIndex(0);
-        setUploadFileList([]); // Clear the Upload component's fileList
     };
 
     const handleNext = () => {
@@ -53,7 +62,6 @@ const ImageCaptionStage1: React.FC = () => {
     useEffect(() => {
         if(file == null && imagePreview == null){
             setCurrentImageIndex(0);
-            setUploadFileList([]); // Clear the Upload component's fileList
         }
     }, [file, imagePreview]);
 
@@ -62,11 +70,19 @@ const ImageCaptionStage1: React.FC = () => {
         <div className={styles.left}>
         {imagePreview && imagePreview.length > 0 ? (
             <div className={styles.imagePreviewContainer}>
-            <img
-                src={imagePreview[currentImageIndex]}
-                alt={`Preview ${currentImageIndex}`}
-                className={styles.previewImage}
-            />
+                {imagePreview[currentImageIndex].type === 'video' ? (
+                    <video
+                    src={imagePreview[currentImageIndex].url}
+                    controls
+                    className={styles.previewImage}
+                    />
+                ) : (
+                    <img
+                    src={imagePreview[currentImageIndex].url}
+                    alt={`Preview ${currentImageIndex}`}
+                    className={styles.previewImage}
+                    />
+                )}
             {imagePreview.length > 1 && (
                 <>
                 {currentImageIndex !== 0 && (
@@ -100,7 +116,7 @@ const ImageCaptionStage1: React.FC = () => {
             multiple
             showUploadList={false}
             beforeUpload={() => false}
-            fileList={uploadFileList}
+            fileList={file || []}
             onChange={({ fileList }) => {
                 const newFiles = fileList
                     .map((file) => file.originFileObj as RcFile)

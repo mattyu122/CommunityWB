@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useHandbillIdQuery, useHandbillInteractionMutation } from '../../api/handbill/handBillQuery';
 import styles from '../../css/HandBillLayer.module.css';
-import { HandbillInteractionType } from '../../enum/HandbillInteractionType';
+import { HandbillInteractionType } from '../../data/enum/HandbillInteractionType';
 import { Board } from '../../models/Board';
 import { HandBill } from '../../models/HandBill';
 import { useBrowsedHandbillsStore } from '../../stores/browsedHandBillStore';
